@@ -146,9 +146,3 @@ The block validation subsystem is a port of Troy Chaplin's validation plugins:
 
 Additional rules (alt-length warning, alt/caption match, non-descriptive alt patterns, gallery inheritance, required post/page title) are adapted from [block-accessibility-checks](https://github.com/troychaplin/block-accessibility-checks).
 
-## Success metrics
-
-- ≥1 experiment merged into Core per year
-- ≥5 stable Features
-- ≥10,000 active installs
-- Steady quarterly contributor growth
