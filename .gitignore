@@ -1,0 +1,18 @@
+# Build artefacts (rebuilt via `npm run build`)
+/build/
+/vendor/
+
+# Dependencies
+/node_modules/
+
+# Local dev environment
+/.wp-env/
+
+# OS / editor cruft
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+
+# Logs
+*.log

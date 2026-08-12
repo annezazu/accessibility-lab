@@ -1,0 +1,59 @@
+/**
+ * Block Validation Framework — editor styles.
+ */
+
+.wp-block.validation-api-block-error {
+	outline: 2px solid #cc1818;
+	outline-offset: 2px;
+}
+
+.wp-block.validation-api-block-warning {
+	outline: 2px solid #dba617;
+	outline-offset: 2px;
+}
+
+.validation-issue-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	.validation-issue {
+		border-bottom: 1px solid #e0e0e0;
+		padding: 4px 0;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&__button {
+			width: 100%;
+			text-align: left;
+			padding: 8px !important;
+			display: flex;
+			align-items: flex-start;
+			gap: 8px;
+			flex-wrap: wrap;
+			height: auto !important;
+		}
+
+		&__message {
+			flex: 1 1 auto;
+			font-weight: 500;
+		}
+
+		&__meta {
+			flex: 0 0 100%;
+			font-size: 12px;
+			color: #757575;
+			font-family: monospace;
+		}
+
+		&--error .validation-issue__button svg {
+			fill: #cc1818;
+		}
+
+		&--warning .validation-issue__button svg {
+			fill: #dba617;
+		}
+	}
+}

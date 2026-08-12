@@ -1,0 +1,43 @@
+/**
+ * Validation Settings admin — layout.
+ *
+ * Same centered/constrained pattern as the main lab settings page.
+ */
+
+.accessibility-lab-page-wrapper {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 860px;
+	margin: 0 auto;
+	padding: 24px;
+
+	.wp-list-table {
+		margin-block-start: 16px;
+
+		th, td {
+			vertical-align: middle;
+			padding: 12px 10px;
+		}
+
+		td strong {
+			display: block;
+			margin-block-end: 2px;
+		}
+
+		td span {
+			color: var(--wpds-color-content-onSurface-secondary, #757575);
+			font-size: 12px;
+			line-height: 1.5;
+		}
+
+		td code {
+			font-size: 12px;
+			background: transparent;
+		}
+
+		// The SelectControl inside the "Level" column shouldn't be full-width.
+		.components-select-control {
+			max-width: 140px;
+		}
+	}
+}
