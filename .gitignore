@@ -5,6 +5,10 @@
 # Dependencies
 /node_modules/
 
+# Lock files
+package-lock.json
+composer.lock
+
 # Local dev environment
 /.wp-env/
 
