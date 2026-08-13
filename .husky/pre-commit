@@ -1,0 +1,19 @@
+# 1. Lint only staged files (CSS/JS/PHP) — fast, scoped to what's changing.
+echo ""
+echo "\033[0;31mLinting staged files...\033[0m"
+npx lint-staged --no-stash || {
+  echo "\n\033[0;31m--------------------------------------------------------------------------------\033[0m"
+  echo "\033[0;31mLinting failed. Commit aborted.\033[0m"
+  echo "\033[0;31m--------------------------------------------------------------------------------\033[0m\n"
+  exit 1
+}
+
+# 2. PHPStan runs project-wide — it needs whole-codebase context, so it can't
+#    be scoped to staged files like the linters above.
+echo "\033[0;31mRunning PHPStan...\033[0m"
+composer phpstan || {
+  echo "\n\033[0;31m--------------------------------------------------------------------------------\033[0m"
+  echo "\033[0;31mPHPStan failed. Commit aborted.\033[0m"
+  echo "\033[0;31m--------------------------------------------------------------------------------\033[0m\n"
+  exit 1
+}

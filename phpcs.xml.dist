@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ruleset name="accessibility-lab" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+	<config name="text_domain" value="accessibility-lab"/>
+
+    <!-- What to scan -->
+	<file>./includes/</file>
+	<file>./accessibility-labw.php</file>
+	<file>./uninstall.php</file>
+
+    <!-- These are excluded from the above paths -->
+	<exclude-pattern>/build/</exclude-pattern>
+	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/vendor/</exclude-pattern>
+
+	<!-- Show sniff and progress -->
+	<arg value="sp" />
+    <!-- Strip the file paths down to the relevant bit -->
+	<arg name="basepath" value="./" />
+    <!-- Enable colors in report -->
+	<arg name="colors" />
+    <!-- Only lint php files by default -->
+	<arg name="extensions" value="php" />
+    <!-- Enables parallel processing when available for faster results -->
+	<arg name="parallel" value="20" />
+</ruleset>

@@ -1,0 +1,9 @@
+parameters:
+	level: 8
+	treatPhpDocTypesAsCertain: false
+	paths:
+		- includes/
+		- accessibility-lab.php
+		- uninstall.php
+	ignoreErrors:
+		# Add narrow, documented exceptions only when justified.
