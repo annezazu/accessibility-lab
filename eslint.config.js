@@ -1,5 +1,4 @@
 const wpPlugin = require( '@wordpress/eslint-plugin' );
-const wpScriptsConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );
 
 module.exports = [
 	{

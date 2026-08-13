@@ -3,6 +3,9 @@
     "description": "An umbrella of accessibility Features (adopted from the community) and Experiments (Core-track).",
     "license": "GPL-2.0-or-later",
     "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.1"
+    },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "phpstan/extension-installer": "^1.4",

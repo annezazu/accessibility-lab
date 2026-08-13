@@ -1,13 +1,10 @@
-# Build artefacts (rebuilt via `npm run build`)
+# Build artefacts (rebuilt via `npm run build` / `npm run plugin-zip`)
 /build/
 /vendor/
+*.zip
 
 # Dependencies
 /node_modules/
-
-# Lock files
-package-lock.json
-composer.lock
 
 # Local dev environment
 /.wp-env/
