@@ -13,17 +13,25 @@ declare( strict_types = 1 );
 
 namespace AccessibilityLab\Modules\Features\ValidationSettings;
 
+/**
+ * Applies stored severity overrides to registered validation checks.
+ */
 final class Level_Override {
 
 	public const OPTION_KEY = 'validation_api_settings';
 
+	/**
+	 * Hook the `validation_api_check_level` filter.
+	 */
 	public function register(): void {
 		add_filter( 'validation_api_check_level', array( $this, 'apply' ), 10, 2 );
 	}
 
 	/**
-	 * @param string               $level
-	 * @param array<string, mixed> $context
+	 * Resolve a check's effective severity level, applying any stored override.
+	 *
+	 * @param string               $level   Declared default level.
+	 * @param array<string, mixed> $context Check context (scope, namespace, name, ...).
 	 */
 	public function apply( string $level, array $context ): string {
 		$stored = get_option( self::OPTION_KEY, array() );

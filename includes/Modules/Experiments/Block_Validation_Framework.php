@@ -27,30 +27,67 @@ use AccessibilityLab\Track;
 use AccessibilityLab\Modules\Experiments\BlockValidation\Check_Registry;
 use AccessibilityLab\Modules\Experiments\BlockValidation\Rest_Controller;
 
+/**
+ * Experiment: Block Validation Framework.
+ */
 final class Block_Validation_Framework extends Abstract_Module {
 
+	/**
+	 * Shared registry, created on boot().
+	 *
+	 * @var Check_Registry|null
+	 */
 	private static ?Check_Registry $shared_registry = null;
 
+	/**
+	 * Module id.
+	 *
+	 * @return string
+	 */
 	public function id(): string {
 		return 'block_validation_framework';
 	}
 
+	/**
+	 * Module bucket.
+	 *
+	 * @return string
+	 */
 	public function bucket(): string {
 		return Bucket::FEATURE;
 	}
 
+	/**
+	 * Module track.
+	 *
+	 * @return string
+	 */
 	public function track(): string {
 		return Track::PRACTICAL;
 	}
 
+	/**
+	 * Module display name.
+	 *
+	 * @return string
+	 */
 	public function name(): string {
 		return __( 'Block Validation Framework', 'accessibility-lab' );
 	}
 
+	/**
+	 * Module description.
+	 *
+	 * @return string
+	 */
 	public function description(): string {
 		return __( 'Framework letting any plugin register real-time validation checks for blocks, post meta, and editor-level document concerns.', 'accessibility-lab' );
 	}
 
+	/**
+	 * Create the shared registry, define the global registration functions,
+	 * register the introspection REST route, and hook editor asset loading.
+	 */
 	public function boot(): void {
 		self::$shared_registry ??= new Check_Registry();
 
@@ -62,12 +99,19 @@ final class Block_Validation_Framework extends Abstract_Module {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 	}
 
+	/**
+	 * The shared check registry, once booted.
+	 *
+	 * @return Check_Registry|null
+	 */
 	public static function shared_registry(): ?Check_Registry {
 		return self::$shared_registry;
 	}
 
 	/**
-	 * @param array<string, mixed> $settings
+	 * Inject resolved checks into the block editor's settings payload.
+	 *
+	 * @param array<string, mixed> $settings Block editor settings.
 	 * @return array<string, mixed>
 	 */
 	public function inject_editor_settings( array $settings ): array {
@@ -86,6 +130,9 @@ final class Block_Validation_Framework extends Abstract_Module {
 		return $settings;
 	}
 
+	/**
+	 * Enqueue the validation-framework editor script/style.
+	 */
 	public function enqueue_editor_assets(): void {
 		$asset_file = ACCESSIBILITY_LAB_DIR . '/build/validation-framework.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
@@ -112,4 +159,3 @@ final class Block_Validation_Framework extends Abstract_Module {
 		}
 	}
 }
-

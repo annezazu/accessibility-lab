@@ -18,20 +18,45 @@ use AccessibilityLab\Modules\Features\Skip_Link_Generator;
 use AccessibilityLab\Modules\Features\Validation_Settings;
 use AccessibilityLab\REST\Modules_Controller;
 
+/**
+ * Singleton entry point that registers modules and boots the plugin.
+ */
 final class Plugin {
 
+	/**
+	 * Singleton instance.
+	 *
+	 * @var self|null
+	 */
 	private static ?Plugin $instance = null;
 
+	/**
+	 * Module registry for this plugin instance.
+	 *
+	 * @var Registry
+	 */
 	public readonly Registry $registry;
 
+	/**
+	 * Get (creating if necessary) the singleton instance.
+	 *
+	 * @return self
+	 */
 	public static function instance(): self {
 		return self::$instance ??= new self();
 	}
 
+	/**
+	 * Private: use instance() to obtain the singleton.
+	 */
 	private function __construct() {
 		$this->registry = new Registry();
 	}
 
+	/**
+	 * Register first-party modules, let third parties register their own,
+	 * boot every enabled module, and wire up the settings admin/REST surfaces.
+	 */
 	public function boot(): void {
 		$this->register_first_party_modules();
 		$this->registry->set_dependencies(
@@ -60,6 +85,9 @@ final class Plugin {
 		add_action( 'init', array( $this, 'register_option' ) );
 	}
 
+	/**
+	 * Register the modules-settings option with core (see boot() for why).
+	 */
 	public function register_option(): void {
 		register_setting(
 			'accessibility_lab',
@@ -83,6 +111,9 @@ final class Plugin {
 		);
 	}
 
+	/**
+	 * Register every module shipped with this plugin.
+	 */
 	private function register_first_party_modules(): void {
 		$this->registry->register( new Skip_Link_Generator() );
 		$this->registry->register( new Media_Library_View_Config() );

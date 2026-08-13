@@ -20,33 +20,65 @@ namespace AccessibilityLab\Abstracts;
 use AccessibilityLab\Credits;
 use AccessibilityLab\Track;
 
+/**
+ * Base class every Accessibility Lab module extends.
+ */
 abstract class Abstract_Module {
 
+	/**
+	 * Stable, unique identifier used as the module's registry key.
+	 *
+	 * @return string
+	 */
 	abstract public function id(): string;
 
 	/**
+	 * Bucket::FEATURE or Bucket::EXPERIMENT — shape/maturity of the module.
+	 *
 	 * @return string Bucket::FEATURE or Bucket::EXPERIMENT.
 	 */
 	abstract public function bucket(): string;
 
 	/**
-	 * @return string Track::CORE_TRACK or Track::PRACTICAL.
+	 * Track::CORE_TRACK or Track::PRACTICAL — intent to reach WordPress Core.
 	 *
 	 * Default: PRACTICAL. Override in modules whose reason for existing is
 	 * to gather data toward a Core proposal.
+	 *
+	 * @return string Track::CORE_TRACK or Track::PRACTICAL.
 	 */
 	public function track(): string {
 		return Track::PRACTICAL;
 	}
 
+	/**
+	 * Human-readable module name shown in the settings UI.
+	 *
+	 * @return string
+	 */
 	abstract public function name(): string;
 
+	/**
+	 * Human-readable module description shown in the settings UI.
+	 *
+	 * @return string
+	 */
 	abstract public function description(): string;
 
+	/**
+	 * Whether the module is enabled by default for new installs.
+	 *
+	 * @return bool
+	 */
 	public function default_enabled(): bool {
 		return false;
 	}
 
+	/**
+	 * Attribution metadata, when this module was adopted from a community source.
+	 *
+	 * @return Credits|null
+	 */
 	public function credits(): ?Credits {
 		return null;
 	}

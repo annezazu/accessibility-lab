@@ -13,10 +13,19 @@ declare( strict_types = 1 );
 
 namespace AccessibilityLab;
 
+/**
+ * Module track constants: CORE_TRACK (aiming at WordPress Core) vs PRACTICAL.
+ */
 final class Track {
 	public const CORE_TRACK = 'core-track';
 	public const PRACTICAL  = 'practical';
 
+	/**
+	 * Whether a value is one of the declared track constants.
+	 *
+	 * @param string $value Value to check.
+	 * @return bool
+	 */
 	public static function is_valid( string $value ): bool {
 		return self::CORE_TRACK === $value || self::PRACTICAL === $value;
 	}

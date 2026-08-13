@@ -11,17 +11,31 @@ namespace AccessibilityLab\Admin;
 
 use AccessibilityLab\Registry;
 
+/**
+ * Admin settings page (mounts the React DataForm).
+ */
 final class Settings_Page {
 
 	private const SLUG = 'accessibility-lab';
 
+	/**
+	 * Construct the settings page.
+	 *
+	 * @param Registry $registry Module registry backing this settings page.
+	 */
 	public function __construct( private readonly Registry $registry ) {}
 
+	/**
+	 * Hook the admin menu and asset registration.
+	 */
 	public function register(): void {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
+	/**
+	 * Register the Settings > Accessibility Lab submenu page.
+	 */
 	public function add_menu(): void {
 		add_options_page(
 			__( 'Accessibility Lab', 'accessibility-lab' ),
@@ -32,6 +46,9 @@ final class Settings_Page {
 		);
 	}
 
+	/**
+	 * Render the mount point for the React settings app.
+	 */
 	public function render(): void {
 		// The React app renders the full page (title + description) using
 		// the `Page` component from @wordpress/admin-ui, so we only need a
@@ -39,6 +56,11 @@ final class Settings_Page {
 		echo '<div id="accessibility-lab-settings"></div>';
 	}
 
+	/**
+	 * Enqueue the settings script/style on our own admin screen only.
+	 *
+	 * @param string $hook Current admin page hook suffix.
+	 */
 	public function enqueue( string $hook ): void {
 		if ( 'settings_page_' . self::SLUG !== $hook ) {
 			return;

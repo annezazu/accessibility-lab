@@ -11,10 +11,10 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 require_once __DIR__ . '/includes/autoload.php';
 
-$plugin = \AccessibilityLab\Plugin::instance();
-$plugin->boot(); // Registers modules so on_uninstall() can run.
+$accessibility_lab = \AccessibilityLab\Plugin::instance();
+$accessibility_lab->boot(); // Registers modules so on_uninstall() can run.
 
-foreach ( $plugin->registry->all() as $module ) {
+foreach ( $accessibility_lab->registry->all() as $module ) {
 	$module->on_uninstall();
 }
 

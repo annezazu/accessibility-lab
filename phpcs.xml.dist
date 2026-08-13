@@ -1,10 +1,19 @@
 <?xml version="1.0"?>
 <ruleset name="accessibility-lab" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
 	<config name="text_domain" value="accessibility-lab"/>
+	<config name="minimum_wp_version" value="6.5"/>
+
+	<!-- Check the code against the WordPress Coding Standards (Core + Extra + Docs). -->
+	<rule ref="WordPress">
+		<!-- includes/autoload.php implements a PSR-4-ish autoloader where class
+		     filenames match the class name (e.g. Bucket.php for class Bucket);
+		     WP's `class-foo.php` naming convention doesn't apply here. -->
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
 
     <!-- What to scan -->
 	<file>./includes/</file>
-	<file>./accessibility-labw.php</file>
+	<file>./accessibility-lab.php</file>
 	<file>./uninstall.php</file>
 
     <!-- These are excluded from the above paths -->

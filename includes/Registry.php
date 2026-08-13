@@ -11,13 +11,25 @@ namespace AccessibilityLab;
 
 use AccessibilityLab\Abstracts\Abstract_Module;
 
+/**
+ * Holds every registered module and their enabled/disabled state.
+ */
 final class Registry {
 
 	public const OPTION_KEY = 'accessibility_lab_settings';
 
-	/** @var array<string, Abstract_Module> */
+	/**
+	 * Registered modules, keyed by id.
+	 *
+	 * @var array<string, Abstract_Module>
+	 */
 	private array $modules = array();
 
+	/**
+	 * Register a module. No-ops on duplicate id or invalid bucket/track.
+	 *
+	 * @param Abstract_Module $module Module instance to register.
+	 */
 	public function register( Abstract_Module $module ): void {
 		$id = $module->id();
 		if ( isset( $this->modules[ $id ] ) ) {
@@ -32,12 +44,18 @@ final class Registry {
 		$this->modules[ $id ] = $module;
 	}
 
-	/** @return array<string, Abstract_Module> */
+	/**
+	 * Every registered module, keyed by id.
+	 *
+	 * @return array<string, Abstract_Module>
+	 */
 	public function all(): array {
 		return $this->modules;
 	}
 
 	/**
+	 * Registered modules filtered to a single bucket.
+	 *
 	 * @param string $bucket Bucket::FEATURE|EXPERIMENT.
 	 * @return array<string, Abstract_Module>
 	 */
@@ -49,6 +67,8 @@ final class Registry {
 	}
 
 	/**
+	 * Registered modules filtered to a single track.
+	 *
 	 * @param string $track Track::CORE_TRACK|PRACTICAL.
 	 * @return array<string, Abstract_Module>
 	 */
@@ -59,15 +79,31 @@ final class Registry {
 		);
 	}
 
+	/**
+	 * Look up a single registered module by id.
+	 *
+	 * @param string $id Module id.
+	 * @return Abstract_Module|null
+	 */
 	public function get( string $id ): ?Abstract_Module {
 		return $this->modules[ $id ] ?? null;
 	}
 
+	/**
+	 * Whether a module is currently enabled.
+	 *
+	 * @param string $id Module id.
+	 * @return bool
+	 */
 	public function is_enabled( string $id ): bool {
 		return (bool) ( $this->settings()[ $id ] ?? false );
 	}
 
-	/** @return array<string, bool> */
+	/**
+	 * Resolved enabled/disabled state for every registered module.
+	 *
+	 * @return array<string, bool>
+	 */
 	public function settings(): array {
 		$stored = get_option( self::OPTION_KEY, array() );
 		if ( ! is_array( $stored ) ) {
@@ -83,8 +119,11 @@ final class Registry {
 	}
 
 	/**
-	 * @param array<string, bool> $incoming
-	 * @return array<string, bool>
+	 * Apply incoming enabled/disabled changes, running on_disable() for any
+	 * module transitioning from enabled to disabled.
+	 *
+	 * @param array<string, bool> $incoming Module id => desired enabled state.
+	 * @return array<string, bool> Resulting full settings map.
 	 */
 	public function update_settings( array $incoming ): array {
 		$current = $this->settings();
@@ -104,23 +143,34 @@ final class Registry {
 	}
 
 	/**
-	 * @var array<string, string> Map of module id => id of module it requires.
+	 * Map of module id => id of module it requires.
 	 * Populated via `set_dependencies()`.
+	 *
+	 * @var array<string, string>
 	 */
 	private array $dependencies = array();
 
 	/**
+	 * Declare module dependencies, checked in boot_enabled().
+	 *
 	 * @param array<string, string> $dependencies module id => required id.
 	 */
 	public function set_dependencies( array $dependencies ): void {
 		$this->dependencies = $dependencies;
 	}
 
-	/** @return array<string, string> */
+	/**
+	 * The currently declared module dependency map.
+	 *
+	 * @return array<string, string>
+	 */
 	public function dependencies(): array {
 		return $this->dependencies;
 	}
 
+	/**
+	 * Boot every enabled module whose declared dependency (if any) is also enabled.
+	 */
 	public function boot_enabled(): void {
 		$settings = $this->settings();
 		foreach ( $settings as $id => $enabled ) {

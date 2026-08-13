@@ -19,17 +19,27 @@ declare( strict_types = 1 );
 namespace AccessibilityLab\Modules\Features\ValidationSettings;
 
 use AccessibilityLab\Modules\Experiments\Block_Validation_Framework;
+use AccessibilityLab\Modules\Experiments\BlockValidation\Check_Registry;
 
+/**
+ * Auto-generates one admin submenu per registered check namespace.
+ */
 final class Admin_Pages {
 
 	public const PARENT_SLUG = 'accessibility-lab-validation';
 	public const HOOK_PREFIX = 'accessibility-lab_page_';
 
+	/**
+	 * Hook the admin menu and asset registration.
+	 */
 	public function register(): void {
 		add_action( 'admin_menu', array( $this, 'add_menu' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
+	/**
+	 * Register the parent "Validation" menu plus one submenu per namespace.
+	 */
 	public function add_menu(): void {
 		$registry = Block_Validation_Framework::shared_registry();
 		if ( ! $registry ) {
@@ -72,18 +82,30 @@ final class Admin_Pages {
 		}
 
 		// Remove the auto-duplicated first submenu label so it uses the
-		// namespace name of the first registered plugin.
+		// namespace name of the first registered plugin. There's no public
+		// API to rename a submenu label after add_submenu_page(), so this
+		// has to touch the actual $submenu global that core's menu renderer
+		// reads from.
 		global $submenu;
 		if ( isset( $submenu[ self::PARENT_SLUG ][0] ) ) {
 			$first_ns = array_key_first( $namespaces );
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Renaming our own submenu entry; core exposes no API for this.
 			$submenu[ self::PARENT_SLUG ][0][0] = $namespaces[ $first_ns ];
 		}
 	}
 
+	/**
+	 * Render the mount point for the React validation-settings app.
+	 */
 	public function render(): void {
 		echo '<div id="accessibility-lab-validation-settings"></div>';
 	}
 
+	/**
+	 * Enqueue the validation-settings script/style on our own admin screens only.
+	 *
+	 * @param string $hook Current admin page hook suffix.
+	 */
 	public function enqueue( string $hook ): void {
 		if ( 0 !== strpos( $hook, 'toplevel_page_' . self::PARENT_SLUG )
 			&& 0 !== strpos( $hook, 'a11y-lab-validation_page_' )
@@ -117,9 +139,12 @@ final class Admin_Pages {
 	}
 
 	/**
+	 * Collect the distinct namespaces registered across every check scope.
+	 *
+	 * @param Check_Registry $registry Shared check registry.
 	 * @return array<string, string> Map of namespace slug -> human label.
 	 */
-	private function collect_namespaces( $registry ): array {
+	private function collect_namespaces( Check_Registry $registry ): array {
 		$out = array();
 		foreach ( $registry->all_by_scope() as $scope => $checks ) {
 			foreach ( $checks as $check ) {

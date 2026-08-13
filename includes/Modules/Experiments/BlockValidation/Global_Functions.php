@@ -43,8 +43,8 @@ if ( ! function_exists( 'validation_api_register_meta_check' ) ) {
 	/**
 	 * Register a meta-scope validation check.
 	 *
-	 * @param string               $post_type
-	 * @param array<string, mixed> $args
+	 * @param string               $post_type e.g. 'post'.
+	 * @param array<string, mixed> $args      Check definition (must include `meta_key`).
 	 */
 	function validation_api_register_meta_check( string $post_type, array $args ): void {
 		$registry = accessibility_lab_validation_check_registry();
@@ -59,7 +59,7 @@ if ( ! function_exists( 'validation_api_register_editor_check' ) ) {
 	 * Register an editor-scope validation check.
 	 *
 	 * @param string               $post_type Use '*' to apply everywhere.
-	 * @param array<string, mixed> $args
+	 * @param array<string, mixed> $args      Check definition.
 	 */
 	function validation_api_register_editor_check( string $post_type, array $args ): void {
 		$registry = accessibility_lab_validation_check_registry();
