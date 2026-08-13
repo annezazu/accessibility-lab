@@ -22,7 +22,7 @@ Either bucket can live on either track. Credits are optional metadata any module
 |---|---|---|---|
 | Skip-link generator | Feature | Practical | wp-accessibility (Joe Dolson) |
 | Media Library: disable infinite scroll by default | Feature | Practical | WordPress core |
-| Heading-order validation | Experiment | Core-track | — |
+| Heading-order validation | Experiment | TBD | — |
 | Block Validation Framework | Experiment | Core-track | validation-api (Troy Chaplin) |
 | Core block accessibility rules | Feature | Practical | validation-api-core-blocks (Troy Chaplin) |
 | Validation settings | Feature | Practical | validation-api-settings (Troy Chaplin) |
