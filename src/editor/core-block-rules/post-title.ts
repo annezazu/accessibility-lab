@@ -10,13 +10,16 @@ addFilter(
 	'editor.validateEditor',
 	'accessibility-lab-core-blocks/post-title',
 	( isValid: boolean, checkName: string ) => {
-		if ( checkName !== 'post_title_required_post' && checkName !== 'post_title_required_page' ) {
+		if (
+			checkName !== 'post_title_required_post' &&
+			checkName !== 'post_title_required_page'
+		) {
 			return isValid;
 		}
-		const currentPost = ( select( editorStore ) as unknown as {
+		const currentPost = select( editorStore ) as unknown as {
 			getCurrentPost: () => { type?: string };
 			getEditedPostAttribute: ( name: string ) => unknown;
-		} );
+		};
 		const postType = currentPost.getCurrentPost().type;
 		if ( checkName === 'post_title_required_post' && postType !== 'post' ) {
 			return true;
@@ -24,7 +27,9 @@ addFilter(
 		if ( checkName === 'post_title_required_page' && postType !== 'page' ) {
 			return true;
 		}
-		const title = String( currentPost.getEditedPostAttribute( 'title' ) ?? '' ).trim();
+		const title = String(
+			currentPost.getEditedPostAttribute( 'title' ) ?? ''
+		).trim();
 		return title.length > 0;
 	}
 );

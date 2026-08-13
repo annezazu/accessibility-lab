@@ -14,9 +14,19 @@
  */
 
 import apiFetch from '@wordpress/api-fetch';
-import { Button, SnackbarList, Spinner, ToggleControl } from '@wordpress/components';
+import {
+	Button,
+	SnackbarList,
+	Spinner,
+	ToggleControl,
+} from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createRoot, useCallback, useEffect, useState } from '@wordpress/element';
+import {
+	createRoot,
+	useCallback,
+	useEffect,
+	useState,
+} from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -81,6 +91,9 @@ function UniversalAccessIcon(): JSX.Element {
 /**
  * A single badge. Only rendered when the module is genuinely in that
  * state — "Stable" is the default and never gets a chip.
+ * @param root0
+ * @param root0.kind
+ * @param root0.label
  */
 function Badge( {
 	kind,
@@ -90,7 +103,9 @@ function Badge( {
 	label: string;
 } ): JSX.Element {
 	return (
-		<span className={ `accessibility-lab-badge accessibility-lab-badge--${ kind }` }>
+		<span
+			className={ `accessibility-lab-badge accessibility-lab-badge--${ kind }` }
+		>
 			{ label }
 		</span>
 	);
@@ -127,6 +142,12 @@ function ModuleBadges( { module }: { module: Module } ): JSX.Element | null {
  * the parent + its dependents share one outer bordered card and each row
  * is separated by a hairline — same visual language as WordPress `Card`
  * with multiple `CardBody` sections.
+ * @param root0
+ * @param root0.module
+ * @param root0.depMet
+ * @param root0.checked
+ * @param root0.isDependent
+ * @param root0.onChange
  */
 function ModuleRow( {
 	module,
@@ -177,7 +198,10 @@ function ModuleRow( {
 
 function Snackbars(): JSX.Element {
 	const notices = useSelect(
-		( select ) => select( noticesStore ).getNotices().filter( ( n ) => n.type === 'snackbar' ),
+		( select ) =>
+			select( noticesStore )
+				.getNotices()
+				.filter( ( n ) => n.type === 'snackbar' ),
 		[]
 	);
 	const { removeNotice } = useDispatch( noticesStore );
@@ -241,6 +265,7 @@ type ModuleGroup = { parent: Module; dependents: Module[] };
  * Group modules for rendering: any module that other modules depend on
  * becomes a group parent, with its dependents nested inside. Independent
  * modules render as single-item groups.
+ * @param modules
  */
 function groupModules( modules: Module[] ): ModuleGroup[] {
 	const byId = new Map( modules.map( ( m ) => [ m.id, m ] as const ) );
@@ -248,7 +273,9 @@ function groupModules( modules: Module[] ): ModuleGroup[] {
 	const groups: ModuleGroup[] = [];
 
 	for ( const m of modules ) {
-		if ( seen.has( m.id ) ) continue;
+		if ( seen.has( m.id ) ) {
+			continue;
+		}
 
 		// If this module depends on another, defer — the parent will pull
 		// it in below when the parent is emitted.
@@ -257,7 +284,9 @@ function groupModules( modules: Module[] ): ModuleGroup[] {
 		}
 
 		const dependents: Module[] = [];
-		for ( const [ dependentId, requiredId ] of Object.entries( DEPENDS_ON ) ) {
+		for ( const [ dependentId, requiredId ] of Object.entries(
+			DEPENDS_ON
+		) ) {
 			if ( requiredId === m.id && byId.has( dependentId ) ) {
 				dependents.push( byId.get( dependentId )! );
 				seen.add( dependentId );
@@ -281,7 +310,8 @@ function groupModules( modules: Module[] ): ModuleGroup[] {
 function SettingsApp(): JSX.Element {
 	const [ modules, setModules ] = useState< Module[] | null >( null );
 	const [ data, setData ] = useState< SettingsData >( {} );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } =
+		useDispatch( noticesStore );
 
 	useEffect( () => {
 		apiFetch< ApiPayload >( { path: REST_PATH } )
@@ -291,7 +321,10 @@ function SettingsApp(): JSX.Element {
 			} )
 			.catch( () => {
 				createErrorNotice(
-					__( 'Failed to load Accessibility Lab settings.', 'accessibility-lab' ),
+					__(
+						'Failed to load Accessibility Lab settings.',
+						'accessibility-lab'
+					),
 					{ type: 'snackbar' }
 				);
 			} );
@@ -310,21 +343,33 @@ function SettingsApp(): JSX.Element {
 				setModules( payload.modules );
 				setData( payload.settings );
 
-				const [ firstId, firstValue ] = Object.entries( changed )[ 0 ] ?? [];
-				const changedModule = modules?.find( ( m ) => m.id === firstId );
+				const [ firstId, firstValue ] =
+					Object.entries( changed )[ 0 ] ?? [];
+				const changedModule = modules?.find(
+					( m ) => m.id === firstId
+				);
 				const label = changedModule?.name ?? firstId ?? '';
 				createSuccessNotice(
 					firstValue
-						? // translators: %s: Module name.
-						  sprintf( __( '%s enabled.', 'accessibility-lab' ), label )
-						: // translators: %s: Module name.
-						  sprintf( __( '%s disabled.', 'accessibility-lab' ), label ),
+						? sprintf(
+								// translators: %s: Module name.
+								__( '%s enabled.', 'accessibility-lab' ),
+								label
+						  )
+						: sprintf(
+								// translators: %s: Module name.
+								__( '%s disabled.', 'accessibility-lab' ),
+								label
+						  ),
 					{ type: 'snackbar' }
 				);
 			} catch {
 				setData( previous );
 				createErrorNotice(
-					__( 'Failed to save. Please try again.', 'accessibility-lab' ),
+					__(
+						'Failed to save. Please try again.',
+						'accessibility-lab'
+					),
 					{ type: 'snackbar' }
 				);
 			}
@@ -337,7 +382,9 @@ function SettingsApp(): JSX.Element {
 			const changed: Record< string, boolean > = { [ id ]: value };
 			const next: SettingsData = { ...data, [ id ]: value };
 			if ( ! value ) {
-				for ( const [ dependentId, requiredId ] of Object.entries( DEPENDS_ON ) ) {
+				for ( const [ dependentId, requiredId ] of Object.entries(
+					DEPENDS_ON
+				) ) {
 					if ( requiredId === id && next[ dependentId ] ) {
 						next[ dependentId ] = false;
 						changed[ dependentId ] = false;
@@ -357,7 +404,10 @@ function SettingsApp(): JSX.Element {
 					<p role="status" aria-live="polite">
 						<Spinner />
 						<span className="screen-reader-text">
-							{ __( 'Loading Accessibility Lab settings…', 'accessibility-lab' ) }
+							{ __(
+								'Loading Accessibility Lab settings…',
+								'accessibility-lab'
+							) }
 						</span>
 					</p>
 				</div>
@@ -373,13 +423,18 @@ function SettingsApp(): JSX.Element {
 			<div className="accessibility-lab-page__inner">
 				<section className="accessibility-lab-section">
 					{ groups.map( ( { parent, dependents } ) => (
-						<div className="accessibility-lab-card" key={ parent.id }>
+						<div
+							className="accessibility-lab-card"
+							key={ parent.id }
+						>
 							<ModuleRow
 								module={ parent }
 								depMet={ true }
 								checked={ Boolean( data[ parent.id ] ) }
 								isDependent={ false }
-								onChange={ ( next ) => toggle( parent.id, next ) }
+								onChange={ ( next ) =>
+									toggle( parent.id, next )
+								}
 							/>
 							{ dependents.map( ( dep ) => {
 								const depMet = Boolean( data[ parent.id ] );
@@ -390,7 +445,9 @@ function SettingsApp(): JSX.Element {
 										depMet={ depMet }
 										checked={ Boolean( data[ dep.id ] ) }
 										isDependent={ true }
-										onChange={ ( next ) => toggle( dep.id, next ) }
+										onChange={ ( next ) =>
+											toggle( dep.id, next )
+										}
 									/>
 								);
 							} ) }

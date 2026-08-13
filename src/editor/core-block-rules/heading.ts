@@ -35,14 +35,25 @@ function flattenBlocks( blocks: Block[] ): Block[] {
 addFilter(
 	'editor.validateBlock',
 	'accessibility-lab-core-blocks/heading',
-	( isValid: boolean, blockType: string, attributes: { level?: number }, checkName: string, _rule: unknown, /* extra */ ) => {
-		if ( blockType !== 'core/heading' || checkName !== 'check_heading_rank' ) {
+	(
+		isValid: boolean,
+		blockType: string,
+		attributes: { level?: number },
+		checkName: string
+	) => {
+		if (
+			blockType !== 'core/heading' ||
+			checkName !== 'check_heading_rank'
+		) {
 			return isValid;
 		}
-		const level = Number( attributes.level ?? 2 );
 		// Locate previous heading in document order.
 		const blocks = flattenBlocks(
-			( select( blockEditorStore ) as unknown as { getBlocks: () => Block[] } ).getBlocks()
+			(
+				select( blockEditorStore ) as unknown as {
+					getBlocks: () => Block[];
+				}
+			 ).getBlocks()
 		);
 		const headings = blocks.filter( ( b ) => b.name === 'core/heading' );
 		// We don't have clientId in the filter args; approximate by finding the
@@ -52,7 +63,10 @@ addFilter(
 		if ( headings.length === 0 ) {
 			return true;
 		}
-		const firstHeadingLevel = Number( headings[ 0 ].attributes?.level ?? 2 );
+		const level = Number( attributes.level ?? 2 );
+		const firstHeadingLevel = Number(
+			headings[ 0 ].attributes?.level ?? 2
+		);
 		if ( level === firstHeadingLevel ) {
 			return firstHeadingLevel <= 2;
 		}

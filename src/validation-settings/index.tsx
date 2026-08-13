@@ -8,9 +8,15 @@
 
 import { Page } from '@wordpress/admin-ui';
 import apiFetch from '@wordpress/api-fetch';
-import { Button, SelectControl, SnackbarList, Spinner } from '@wordpress/components';
+import { SelectControl, SnackbarList, Spinner } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createRoot, useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import {
+	createRoot,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 
@@ -88,7 +94,10 @@ function levelToOverride( level: Level ): Override {
 
 function Snackbars(): JSX.Element {
 	const notices = useSelect(
-		( select ) => select( noticesStore ).getNotices().filter( ( n ) => n.type === 'snackbar' ),
+		( select ) =>
+			select( noticesStore )
+				.getNotices()
+				.filter( ( n ) => n.type === 'snackbar' ),
 		[]
 	);
 	const { removeNotice } = useDispatch( noticesStore );
@@ -97,8 +106,11 @@ function Snackbars(): JSX.Element {
 
 function SettingsApp(): JSX.Element {
 	const [ payload, setPayload ] = useState< ChecksPayload | null >( null );
-	const [ overrides, setOverrides ] = useState< Record< string, Override > >( {} );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const [ overrides, setOverrides ] = useState< Record< string, Override > >(
+		{}
+	);
+	const { createSuccessNotice, createErrorNotice } =
+		useDispatch( noticesStore );
 
 	useEffect( () => {
 		Promise.all( [
@@ -110,9 +122,15 @@ function SettingsApp(): JSX.Element {
 				setOverrides( overridesData.overrides ?? {} );
 			} )
 			.catch( () => {
-				createErrorNotice( __( 'Failed to load validation settings.', 'accessibility-lab' ), {
-					type: 'snackbar',
-				} );
+				createErrorNotice(
+					__(
+						'Failed to load validation settings.',
+						'accessibility-lab'
+					),
+					{
+						type: 'snackbar',
+					}
+				);
 			} );
 	}, [ createErrorNotice ] );
 
@@ -165,9 +183,15 @@ function SettingsApp(): JSX.Element {
 				);
 			} catch {
 				setOverrides( previous );
-				createErrorNotice( __( 'Failed to save. Please try again.', 'accessibility-lab' ), {
-					type: 'snackbar',
-				} );
+				createErrorNotice(
+					__(
+						'Failed to save. Please try again.',
+						'accessibility-lab'
+					),
+					{
+						type: 'snackbar',
+					}
+				);
 			}
 		},
 		[ overrides, createSuccessNotice, createErrorNotice ]
@@ -187,75 +211,118 @@ function SettingsApp(): JSX.Element {
 	}
 
 	const namespaceLabel =
-		visibleChecks[ 0 ]?.plugin_title || selectedNamespace || __( 'Validation', 'accessibility-lab' );
+		visibleChecks[ 0 ]?.plugin_title ||
+		selectedNamespace ||
+		__( 'Validation', 'accessibility-lab' );
 
 	return (
 		<div className="accessibility-lab-page-wrapper">
-		<Page
-			title={ namespaceLabel }
-			description={ sprintf(
-				/* translators: %s: namespace slug. */
-				__( 'Severity overrides for checks registered under namespace "%s".', 'accessibility-lab' ),
-				selectedNamespace
-			) }
-		>
-			{ visibleChecks.length === 0 ? (
-				<p>{ __( 'No checks registered for this namespace.', 'accessibility-lab' ) }</p>
-			) : (
-				<table className="wp-list-table widefat striped">
-					<thead>
-						<tr>
-							<th>{ __( 'Description', 'accessibility-lab' ) }</th>
-							<th>{ __( 'Target', 'accessibility-lab' ) }</th>
-							<th>{ __( 'Scope', 'accessibility-lab' ) }</th>
-							<th>{ __( 'Level', 'accessibility-lab' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ visibleChecks.map( ( check ) => {
-							const key = overrideKey( check );
-							const current: Override =
-								overrides[ key ] ?? levelToOverride( check.resolved_level );
-							return (
-								<tr key={ key }>
-									<td>
-										<strong>{ check.name }</strong>
-										<br />
-										<span>{ check.description }</span>
-									</td>
-									<td>
-										<code>{ targetLabel( check ) }</code>
-									</td>
-									<td>{ check.scope }</td>
-									<td>
-										<SelectControl
-											label={ __( 'Level', 'accessibility-lab' ) }
-											hideLabelFromVision
-											value={ current }
-											disabled={ ! check.configurable }
-											options={ [
-												{ label: __( 'Error', 'accessibility-lab' ), value: 'error' },
-												{ label: __( 'Warning', 'accessibility-lab' ), value: 'warning' },
-												{ label: __( 'Disabled', 'accessibility-lab' ), value: 'disabled' },
-											] }
-											onChange={ ( value ) =>
-												handleChange( check, value as Override )
-											}
-										/>
-									</td>
-								</tr>
-							);
-						} ) }
-					</tbody>
-				</table>
-			) }
-			<Snackbars />
-		</Page>
+			<Page
+				title={ namespaceLabel }
+				description={ sprintf(
+					/* translators: %s: namespace slug. */
+					__(
+						'Severity overrides for checks registered under namespace "%s".',
+						'accessibility-lab'
+					),
+					selectedNamespace
+				) }
+			>
+				{ visibleChecks.length === 0 ? (
+					<p>
+						{ __(
+							'No checks registered for this namespace.',
+							'accessibility-lab'
+						) }
+					</p>
+				) : (
+					<table className="wp-list-table widefat striped">
+						<thead>
+							<tr>
+								<th>
+									{ __( 'Description', 'accessibility-lab' ) }
+								</th>
+								<th>{ __( 'Target', 'accessibility-lab' ) }</th>
+								<th>{ __( 'Scope', 'accessibility-lab' ) }</th>
+								<th>{ __( 'Level', 'accessibility-lab' ) }</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ visibleChecks.map( ( check ) => {
+								const key = overrideKey( check );
+								const current: Override =
+									overrides[ key ] ??
+									levelToOverride( check.resolved_level );
+								return (
+									<tr key={ key }>
+										<td>
+											<strong>{ check.name }</strong>
+											<br />
+											<span>{ check.description }</span>
+										</td>
+										<td>
+											<code>
+												{ targetLabel( check ) }
+											</code>
+										</td>
+										<td>{ check.scope }</td>
+										<td>
+											<SelectControl
+												label={ __(
+													'Level',
+													'accessibility-lab'
+												) }
+												hideLabelFromVision
+												value={ current }
+												disabled={
+													! check.configurable
+												}
+												options={ [
+													{
+														label: __(
+															'Error',
+															'accessibility-lab'
+														),
+														value: 'error',
+													},
+													{
+														label: __(
+															'Warning',
+															'accessibility-lab'
+														),
+														value: 'warning',
+													},
+													{
+														label: __(
+															'Disabled',
+															'accessibility-lab'
+														),
+														value: 'disabled',
+													},
+												] }
+												onChange={ ( value ) =>
+													handleChange(
+														check,
+														value as Override
+													)
+												}
+											/>
+										</td>
+									</tr>
+								);
+							} ) }
+						</tbody>
+					</table>
+				) }
+				<Snackbars />
+			</Page>
 		</div>
 	);
 }
 
-const mount = document.getElementById( 'accessibility-lab-validation-settings' );
+const mount = document.getElementById(
+	'accessibility-lab-validation-settings'
+);
 if ( mount ) {
 	createRoot( mount ).render( <SettingsApp /> );
 }

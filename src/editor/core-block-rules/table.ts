@@ -15,7 +15,12 @@ type TableAttributes = {
 addFilter(
 	'editor.validateBlock',
 	'accessibility-lab-core-blocks/table',
-	( isValid: boolean, blockType: string, attributes: TableAttributes, checkName: string ) => {
+	(
+		isValid: boolean,
+		blockType: string,
+		attributes: TableAttributes,
+		checkName: string
+	) => {
 		if ( blockType !== 'core/table' ) {
 			return isValid;
 		}
@@ -24,7 +29,8 @@ addFilter(
 			return isValid;
 		}
 
-		const hasHead = Array.isArray( attributes.head ) && attributes.head.length > 0;
+		const hasHead =
+			Array.isArray( attributes.head ) && attributes.head.length > 0;
 		if ( hasHead ) {
 			return true;
 		}

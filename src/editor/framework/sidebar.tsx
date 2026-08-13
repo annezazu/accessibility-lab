@@ -26,7 +26,9 @@ function IssueRow( { issue }: { issue: Issue } ): JSX.Element {
 	};
 	const icon = issue.severity === 'error' ? close : caution;
 	return (
-		<li className={ `validation-issue validation-issue--${ issue.severity }` }>
+		<li
+			className={ `validation-issue validation-issue--${ issue.severity }` }
+		>
 			<Button
 				variant="tertiary"
 				onClick={ onClick }
@@ -34,11 +36,14 @@ function IssueRow( { issue }: { issue: Issue } ): JSX.Element {
 				className="validation-issue__button"
 			>
 				<Icon icon={ icon } />
-				<span className="validation-issue__message">{ issue.message }</span>
+				<span className="validation-issue__message">
+					{ issue.message }
+				</span>
 				<span className="validation-issue__meta">
 					{ issue.scope === 'block' && issue.blockType }
 					{ issue.scope === 'meta' && issue.metaKey }
-					{ issue.scope === 'editor' && __( 'Document', 'accessibility-lab' ) }
+					{ issue.scope === 'editor' &&
+						__( 'Document', 'accessibility-lab' ) }
 				</span>
 			</Button>
 		</li>
@@ -65,25 +70,22 @@ function ValidationConsequences(): null {
 function ValidationSidebarPanel(): JSX.Element {
 	// Guard every selector: the sidebar can mount before the validation
 	// store's first dispatch, and a thrown selector white-screens the editor.
-	const { issues, errorCount, warningCount } = useSelect(
-		( selectFn ) => {
-			try {
-				const store = selectFn( VALIDATION_STORE ) as unknown as {
-					getIssues?: () => Issue[];
-					errorCount?: () => number;
-					warningCount?: () => number;
-				} | null;
-				return {
-					issues: store?.getIssues?.() ?? [],
-					errorCount: store?.errorCount?.() ?? 0,
-					warningCount: store?.warningCount?.() ?? 0,
-				};
-			} catch {
-				return { issues: [] as Issue[], errorCount: 0, warningCount: 0 };
-			}
-		},
-		[]
-	);
+	const { issues, errorCount, warningCount } = useSelect( ( selectFn ) => {
+		try {
+			const store = selectFn( VALIDATION_STORE ) as unknown as {
+				getIssues?: () => Issue[];
+				errorCount?: () => number;
+				warningCount?: () => number;
+			} | null;
+			return {
+				issues: store?.getIssues?.() ?? [],
+				errorCount: store?.errorCount?.() ?? 0,
+				warningCount: store?.warningCount?.() ?? 0,
+			};
+		} catch {
+			return { issues: [] as Issue[], errorCount: 0, warningCount: 0 };
+		}
+	}, [] );
 
 	const errors = issues.filter( ( i ) => i.severity === 'error' );
 	const warnings = issues.filter( ( i ) => i.severity === 'warning' );
@@ -113,7 +115,10 @@ function ValidationSidebarPanel(): JSX.Element {
 					</p>
 				</PanelBody>
 				{ errors.length > 0 && (
-					<PanelBody title={ __( 'Errors', 'accessibility-lab' ) } initialOpen={ true }>
+					<PanelBody
+						title={ __( 'Errors', 'accessibility-lab' ) }
+						initialOpen={ true }
+					>
 						<ul className="validation-issue-list">
 							{ errors.map( ( i ) => (
 								<IssueRow key={ i.id } issue={ i } />
@@ -122,7 +127,10 @@ function ValidationSidebarPanel(): JSX.Element {
 					</PanelBody>
 				) }
 				{ warnings.length > 0 && (
-					<PanelBody title={ __( 'Warnings', 'accessibility-lab' ) } initialOpen={ true }>
+					<PanelBody
+						title={ __( 'Warnings', 'accessibility-lab' ) }
+						initialOpen={ true }
+					>
 						<ul className="validation-issue-list">
 							{ warnings.map( ( i ) => (
 								<IssueRow key={ i.id } issue={ i } />

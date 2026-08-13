@@ -22,11 +22,15 @@ export function useMetaField( metaKey: string ): MetaFieldProps {
 			const store = selectFn( VALIDATION_STORE ) as unknown as {
 				getIssues: () => Issue[];
 			};
-			const relevant = store.getIssues().filter( ( i ) => i.scope === 'meta' && i.metaKey === metaKey );
+			const relevant = store
+				.getIssues()
+				.filter( ( i ) => i.scope === 'meta' && i.metaKey === metaKey );
 			if ( relevant.length === 0 ) {
 				return { className: 'validation-api-meta-field' };
 			}
-			const worst = relevant.some( ( i ) => i.severity === 'error' ) ? 'error' : 'warning';
+			const worst = relevant.some( ( i ) => i.severity === 'error' )
+				? 'error'
+				: 'warning';
 			return {
 				className: `validation-api-meta-field validation-api-meta-field--${ worst }`,
 				help: relevant.map( ( i ) => i.message ).join( ' ' ),

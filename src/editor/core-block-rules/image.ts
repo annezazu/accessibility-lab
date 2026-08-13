@@ -15,21 +15,22 @@ function stripHtml( html: string ): string {
 addFilter(
 	'editor.validateBlock',
 	'accessibility-lab-core-blocks/image',
-	( isValid: boolean, blockType: string, attributes: Record< string, unknown >, checkName: string ) => {
+	(
+		isValid: boolean,
+		blockType: string,
+		attributes: Record< string, unknown >,
+		checkName: string
+	) => {
 		if ( blockType !== 'core/image' ) {
 			return isValid;
 		}
 		const alt = String( attributes.alt ?? '' ).trim();
-		const caption = stripHtml( String( attributes.caption ?? '' ) );
 		const isDecorative = Boolean( attributes.isDecorative );
 		const hasImage = Boolean( attributes.url || attributes.id );
 
 		switch ( checkName ) {
 			case 'check_image_alt_text':
-				if ( ! hasImage || isDecorative ) {
-					return true;
-				}
-				return alt.length > 0;
+				return hasImage && ! isDecorative ? alt.length > 0 : true;
 
 			case 'check_image_alt_text_length':
 				if ( ! alt ) {
@@ -37,11 +38,13 @@ addFilter(
 				}
 				return alt.length <= 125;
 
-			case 'check_image_alt_caption_match':
+			case 'check_image_alt_caption_match': {
+				const caption = stripHtml( String( attributes.caption ?? '' ) );
 				if ( ! alt || ! caption ) {
 					return true;
 				}
 				return alt.toLowerCase() !== caption.toLowerCase();
+			}
 
 			case 'check_image_alt_text_patterns':
 				if ( ! alt || isDecorative ) {
