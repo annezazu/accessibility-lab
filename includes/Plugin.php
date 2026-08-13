@@ -75,7 +75,7 @@ final class Plugin {
 
 		$this->registry->boot_enabled();
 
-		( new Settings_Page( $this->registry ) )->register();
+		( new Settings_Page() )->register();
 		( new Modules_Controller( $this->registry ) )->register();
 
 		// Register the modules-settings option with core so it's visible

@@ -9,21 +9,15 @@ declare( strict_types = 1 );
 
 namespace AccessibilityLab\Admin;
 
-use AccessibilityLab\Registry;
-
 /**
  * Admin settings page (mounts the React DataForm).
+ *
+ * Takes no registry: the React app fetches module data over REST via
+ * AccessibilityLab\REST\Modules_Controller rather than server-side.
  */
 final class Settings_Page {
 
 	private const SLUG = 'accessibility-lab';
-
-	/**
-	 * Construct the settings page.
-	 *
-	 * @param Registry $registry Module registry backing this settings page.
-	 */
-	public function __construct( private readonly Registry $registry ) {}
 
 	/**
 	 * Hook the admin menu and asset registration.

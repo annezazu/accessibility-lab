@@ -57,9 +57,9 @@ final class Skip_Link_Generator extends Abstract_Module {
 	/**
 	 * Attribution for this module's origin.
 	 *
-	 * @return Credits|null
+	 * @return Credits
 	 */
-	public function credits(): ?Credits {
+	public function credits(): Credits {
 		return new Credits(
 			author: 'Joe Dolson',
 			source_plugin_slug: 'wp-accessibility',

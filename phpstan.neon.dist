@@ -5,5 +5,9 @@ parameters:
 		- includes/
 		- accessibility-lab.php
 		- uninstall.php
+	bootstrapFiles:
+		- phpstan-bootstrap.php
+	dynamicConstantNames:
+		- ACCESSIBILITY_LAB_URL
 	ignoreErrors:
 		# Add narrow, documented exceptions only when justified.

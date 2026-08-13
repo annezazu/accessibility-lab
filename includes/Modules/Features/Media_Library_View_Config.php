@@ -79,9 +79,9 @@ final class Media_Library_View_Config extends Abstract_Module {
 	/**
 	 * Attribution for this module's origin.
 	 *
-	 * @return Credits|null
+	 * @return Credits
 	 */
-	public function credits(): ?Credits {
+	public function credits(): Credits {
 		return new Credits(
 			author: 'WordPress core / Trac #65775',
 			source_plugin_slug: 'wordpress-core',
