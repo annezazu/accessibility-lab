@@ -7,6 +7,9 @@
 	"scripts": {
 		"build": "wp-scripts build",
 		"start": "wp-scripts start",
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop",
+		"env:clean": "wp-env clean",
 		"lint": "npm-run-all lint:*",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
@@ -27,6 +30,7 @@
 		"*.php": "vendor/bin/phpcs"
 	},
 	"devDependencies": {
+		"@wordpress/env": "^11.13.0",
 		"@wordpress/scripts": "32.6.0",
 		"@wordpress/stylelint-config": "^24.1.0",
 		"husky": "^9.1.7",
