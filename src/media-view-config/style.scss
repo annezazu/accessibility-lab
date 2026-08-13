@@ -107,7 +107,6 @@
 }
 
 // ─── Density ────────────────────────────────────────────────────────────
-//
 // Core CSS sets `.attachment { width: 25%; }` and then overrides it based
 // on a runtime-computed `[data-columns="N"]` on `.media-frame-content`.
 // That N gets recalculated on window resize, so overriding data-columns
@@ -124,12 +123,12 @@
 // so all three tiers read as clearly different.
 
 // ─── Infinite scroll ───────────────────────────────────────────────────
-//
 // When infinite scroll is on, hide the "Load more" button — our JS clicks
 // it programmatically as the user approaches the bottom of the list. We
 // keep the "Showing X of Y" count visible so users still have context.
 
 body[data-media-infinite-scrolling='on'] {
+
 	.load-more-wrapper,
 	button.load-more,
 	.load-more-jump {
@@ -138,15 +137,21 @@ body[data-media-infinite-scrolling='on'] {
 }
 
 body[data-media-thumbnail-density='compact'] {
-	.wp-core-ui .attachments-browser .attachments .attachment,
-	.media-frame-content .attachments .attachment {
+
+	.media-frame-content .attachments .attachment,
+	.wp-core-ui .attachments-browser .attachments .attachment {
 		width: 8.3333% !important; // 12 columns — clearly smallest
 	}
 }
 
 body[data-media-thumbnail-density='spacious'] {
-	.wp-core-ui .attachments-browser .attachments .attachment,
-	.media-frame-content .attachments .attachment {
+
+	// The compact block above establishes this same low-then-high specificity
+	// order first; body[data-media-thumbnail-density] values are mutually
+	// exclusive, so these rules never actually compete in the cascade.
+	/* stylelint-disable-next-line no-descending-specificity */
+	.media-frame-content .attachments .attachment,
+	.wp-core-ui .attachments-browser .attachments .attachment {
 		width: 50% !important; // 2 columns — clearly largest
 	}
 }
@@ -155,23 +160,23 @@ body[data-media-thumbnail-density='spacious'] {
 // 4–8 columns depending on viewport). That's what "comfortable" means.
 
 // ─── File name visibility ──────────────────────────────────────────────
-//
 // Default core behaviour:
 //   - Non-image attachments render a `.filename` element positioned
 //     absolute at the bottom of the tile (always visible).
 //   - Image thumbnails have NO `.filename` in the DOM; the aria-label
 //     surfaces via `::after` on `.attachment:not(:has(.filename))` in
 //     newer WP, but earlier versions leave images unlabelled.
-//
 // When the pref is OFF we hide both the filename overlay and the ::after
 // aria-label fallback, so image tiles are pure thumbnails. When ON we make
 // the label prominent on both image and non-image tiles (background,
 // legible font, readable regardless of underlying image contrast).
 
 body[data-media-show-filenames='off'] {
+
 	.wp-core-ui .attachment .filename {
 		display: none !important;
 	}
+
 	.wp-core-ui .attachment:not(:has(.filename))::after {
 		display: none !important;
 	}

@@ -10,16 +10,57 @@
 // Take over the admin content area for a full white background. Scoped to
 // our screen only.
 body.settings_page_accessibility-lab {
+
 	#wpcontent,
 	#wpbody-content {
 		padding-inline: 0;
 	}
+
 	#wpbody-content {
 		background: #fff;
 		padding-block-end: 40px;
 	}
+
 	.wrap {
 		margin: 0;
+	}
+
+	// ─── Snackbars ──────────────────────────────────────────────────────────
+	// Match the AI plugin: pin the snackbar list to the bottom-left of the
+	// viewport, offset just past the admin sidebar so it doesn't disappear
+	// behind the menu. The list stays fixed to the viewport, so it remains
+	// visible regardless of scroll position (up to the auto-dismiss timeout).
+
+	.components-snackbar-list {
+		position: fixed;
+		inset-block-end: 20px;
+		inset-inline-start: 176px; // WP admin sidebar (~160px) + 16px gutter.
+		inset-inline-end: auto;
+		width: auto;
+		max-width: min( 480px, calc( 100vw - 200px ) );
+		padding: 0;
+	}
+
+	// Folded admin sidebar drops width to 36px.
+	&.folded .components-snackbar-list {
+		inset-inline-start: 52px;
+		max-width: min( 480px, calc( 100vw - 72px ) );
+	}
+
+	@media screen and (max-width: 960px) {
+
+		.components-snackbar-list {
+			inset-inline-start: 52px;
+			max-width: min( 480px, calc( 100vw - 72px ) );
+		}
+	}
+
+	@media screen and (max-width: 782px) {
+
+		.components-snackbar-list {
+			inset-inline-start: 16px;
+			max-width: calc( 100vw - 32px );
+		}
 	}
 }
 
@@ -31,7 +72,6 @@ body.settings_page_accessibility-lab {
 }
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────
-//
 // Sticky to the top of the viewport so the title, description, and
 // action links stay visible while scrolling — matches the AI plugin.
 
@@ -126,7 +166,6 @@ body.settings_page_accessibility-lab {
 }
 
 // ─── Card + rows ────────────────────────────────────────────────────────
-//
 // A card is the outer bordered container. Each row inside is a module
 // toggle. When a card has multiple rows (parent + dependents), rows are
 // separated by a hairline; dependents get a slight indent so the
@@ -147,7 +186,7 @@ body.settings_page_accessibility-lab {
 .accessibility-lab-row {
 	padding: 20px 24px;
 
-	& + .accessibility-lab-row {
+	+ .accessibility-lab-row {
 		border-block-start: 1px solid #f0f0f0;
 	}
 
@@ -228,44 +267,5 @@ body.settings_page_accessibility-lab {
 	&--core-track {
 		background: #dbeafe;
 		color: #1e3a8a;
-	}
-}
-
-// ─── Snackbars ──────────────────────────────────────────────────────────
-//
-// Match the AI plugin: pin the snackbar list to the bottom-left of the
-// viewport, offset just past the admin sidebar so it doesn't disappear
-// behind the menu. The list stays fixed to the viewport, so it remains
-// visible regardless of scroll position (up to the auto-dismiss timeout).
-
-body.settings_page_accessibility-lab {
-	.components-snackbar-list {
-		position: fixed;
-		inset-block-end: 20px;
-		inset-inline-start: 176px; // WP admin sidebar (~160px) + 16px gutter.
-		inset-inline-end: auto;
-		width: auto;
-		max-width: min( 480px, calc( 100vw - 200px ) );
-		padding: 0;
-	}
-
-	// Folded admin sidebar drops width to 36px.
-	&.folded .components-snackbar-list {
-		inset-inline-start: 52px;
-		max-width: min( 480px, calc( 100vw - 72px ) );
-	}
-
-	@media screen and (max-width: 960px) {
-		.components-snackbar-list {
-			inset-inline-start: 52px;
-			max-width: min( 480px, calc( 100vw - 72px ) );
-		}
-	}
-
-	@media screen and (max-width: 782px) {
-		.components-snackbar-list {
-			inset-inline-start: 16px;
-			max-width: calc( 100vw - 32px );
-		}
 	}
 }
