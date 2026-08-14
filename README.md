@@ -2,7 +2,7 @@
 
 Umbrella WordPress plugin for accessibility **Features** and **Experiments**, each labelled with a **Track** describing whether it is aimed at Core adoption or shipped as a standalone practical tool.
 
-## Two orthogonal dimensions
+## Two dimensions for modules
 
 Every module answers two questions:
 
