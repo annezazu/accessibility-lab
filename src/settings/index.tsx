@@ -222,7 +222,7 @@ function Toolbar(): JSX.Element {
 				</Button>
 				<Button
 					variant="tertiary"
-					href="https://github.com/troychaplin/block-accessibility-checks"
+					href="https://github.com/annezazu/accessibility-lab"
 					target="_blank"
 					rel="noopener noreferrer"
 					icon={ external }
