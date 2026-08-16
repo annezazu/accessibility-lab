@@ -20,7 +20,6 @@ Either bucket can live on either track. Credits are optional metadata any module
 
 | Module | Bucket | Track | Adopted from |
 |---|---|---|---|
-| Skip-link generator | Feature | Practical | wp-accessibility (Joe Dolson) |
 | Media Library: disable infinite scroll by default | Feature | Practical | WordPress core |
 | Heading-order validation | Experiment | TBD | — |
 | Block Validation Framework | Experiment | Core-track | validation-api (Troy Chaplin) |
@@ -112,7 +111,6 @@ includes/
   REST/Modules_Controller.php  /accessibility-lab/v1/modules
   Modules/
     Features/
-      Skip_Link_Generator.php
       Media_Library_Infinite_Scroll_Optout.php
       Core_Block_Validation_Rules.php
       CoreBlockRules/...         (per-block PHP registration in one file per group)
