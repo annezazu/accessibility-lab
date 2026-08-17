@@ -71,20 +71,28 @@ add_action( 'init', function () {
 	if ( ! function_exists( 'validation_api_register_block_check' ) ) {
 		return; // Framework module not active.
 	}
+
+	// Name your plugin once. Every check under this namespace is credited to
+	// it on the settings page.
+	validation_api_register_namespace( 'my-plugin', [
+		'title' => 'My Plugin',
+	] );
+
 	validation_api_register_block_check( 'my-plugin/my-block', [
-		'namespace'    => 'my-plugin',
-		'name'         => 'has_title',
-		'title'        => 'Block title required',
-		'level'        => 'error',
-		'description'  => 'This block must have a title.',
-		'error_msg'    => 'Title is required.',
-		'warning_msg'  => 'Consider adding a title.',
-		'plugin_title' => 'My Plugin',
+		'namespace'   => 'my-plugin',
+		'name'        => 'has_title',
+		'title'       => 'Block title required',
+		'level'       => 'error',
+		'description' => 'This block must have a title.',
+		'error_msg'   => 'Title is required.',
+		'warning_msg' => 'Consider adding a title.',
 	] );
 } );
 ```
 
 `name` is the slug: it identifies the check in the override key and is the value passed to the JS filter, so keep it stable. `title` is the human label shown on the Validation settings page and can be reworded freely; it falls back to `name` when omitted.
+
+`validation_api_register_namespace()` sets the plugin name shown in the settings table's **Plugin** column and filter. Call it once — order doesn't matter, so it can run before or after your checks. Skip it and checks are credited to the raw namespace slug. A check may still pass its own `plugin_title` to override the namespace title for that one row.
 
 And the matching JS filter in your editor bundle:
 

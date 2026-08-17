@@ -24,6 +24,26 @@ if ( ! function_exists( 'accessibility_lab_validation_check_registry' ) ) {
 	}
 }
 
+if ( ! function_exists( 'validation_api_register_namespace' ) ) {
+	/**
+	 * Declare the display name for a check namespace.
+	 *
+	 * Call this once; every check registered under the namespace is credited
+	 * to it in the admin UI. Without it, checks fall back to showing the raw
+	 * namespace slug. Order doesn't matter — this may run before or after the
+	 * checks themselves.
+	 *
+	 * @param string               $namespace Namespace slug used by this plugin's checks.
+	 * @param array<string, mixed> $args      Accepts `title`.
+	 */
+	function validation_api_register_namespace( string $namespace, array $args ): void {
+		$registry = accessibility_lab_validation_check_registry();
+		if ( $registry instanceof Check_Registry ) {
+			$registry->register_namespace( $namespace, $args );
+		}
+	}
+}
+
 if ( ! function_exists( 'validation_api_register_block_check' ) ) {
 	/**
 	 * Register a block-scope validation check.

@@ -26,6 +26,53 @@ final class Check_Registry {
 	);
 
 	/**
+	 * Human labels for namespaces, keyed by slug.
+	 *
+	 * @var array<string, string>
+	 */
+	private array $namespace_titles = array();
+
+	/**
+	 * Declare the display name for a namespace.
+	 *
+	 * Lets a plugin name itself once rather than repeating `plugin_title` on
+	 * every check it registers.
+	 *
+	 * @param string               $namespace Namespace slug used by the plugin's checks.
+	 * @param array<string, mixed> $args      Accepts `title`.
+	 */
+	public function register_namespace( string $namespace, array $args ): void {
+		if ( '' === $namespace ) {
+			return;
+		}
+		$title = isset( $args['title'] ) ? (string) $args['title'] : '';
+		if ( '' === $title ) {
+			return;
+		}
+		$this->namespace_titles[ $namespace ] = $title;
+	}
+
+	/**
+	 * The display name to credit a check to.
+	 *
+	 * Resolved on read rather than at registration, because a plugin's
+	 * namespace and its checks are both registered on `init` and callers
+	 * can't be expected to order the two.
+	 *
+	 * @param array<string, mixed> $check
+	 */
+	public function resolve_plugin_title( array $check ): string {
+		$explicit = (string) ( $check['plugin_title'] ?? '' );
+		if ( '' !== $explicit ) {
+			return $explicit;
+		}
+
+		$namespace = (string) ( $check['namespace'] ?? '' );
+
+		return $this->namespace_titles[ $namespace ] ?? $namespace;
+	}
+
+	/**
 	 * Register a block-scope check.
 	 *
 	 * @param string               $block_type e.g. 'core/image'.

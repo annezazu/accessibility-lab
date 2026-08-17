@@ -40,6 +40,7 @@ final class Rest_Controller {
 			foreach ( $checks as $i => $check ) {
 				$scoped[ $scope ][ $i ]['id']             = Check_Key::from_check( $check );
 				$scoped[ $scope ][ $i ]['resolved_level'] = $this->registry->resolve_level( $check );
+				$scoped[ $scope ][ $i ]['plugin_title']   = $this->registry->resolve_plugin_title( $check );
 			}
 		}
 		return rest_ensure_response(

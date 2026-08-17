@@ -94,6 +94,13 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			return;
 		}
 
+		validation_api_register_namespace(
+			self::NS,
+			array(
+				'title' => __( 'Accessibility Lab: Core Blocks', 'accessibility-lab' ),
+			)
+		);
+
 		$this->register_image_checks();
 		$this->register_button_checks();
 		$this->register_table_checks();
@@ -112,7 +119,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Images must have alt text unless marked decorative.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This image is missing alt text.', 'accessibility-lab' ),
 				'warning_msg' => __( 'Consider adding alt text to this image.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 		validation_api_register_block_check(
@@ -125,7 +131,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Alt text should be 125 characters or fewer.', 'accessibility-lab' ),
 				'error_msg'   => __( 'Alt text exceeds 125 characters.', 'accessibility-lab' ),
 				'warning_msg' => __( 'Alt text exceeds 125 characters. Consider shortening.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 		validation_api_register_block_check(
@@ -138,7 +143,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Alt text and caption must not be identical.', 'accessibility-lab' ),
 				'error_msg'   => __( 'Alt text is identical to the caption; screen readers will hear the same text twice.', 'accessibility-lab' ),
 				'warning_msg' => __( 'Alt text matches the caption.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 		validation_api_register_block_check(
@@ -151,7 +155,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Alt text must be descriptive; filenames and phrases like "image of" are rejected.', 'accessibility-lab' ),
 				'error_msg'   => __( 'Alt text is not descriptive (filename or generic phrase detected).', 'accessibility-lab' ),
 				'warning_msg' => __( 'Alt text may not be descriptive.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 
@@ -173,7 +176,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 					'description' => __( 'Applies image accessibility checks to every image in a gallery.', 'accessibility-lab' ),
 					'error_msg'   => __( 'One or more gallery images fail an accessibility check.', 'accessibility-lab' ),
 					'warning_msg' => __( 'One or more gallery images have accessibility warnings.', 'accessibility-lab' ),
-					'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 				)
 			);
 		}
@@ -190,7 +192,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Buttons must have descriptive text.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This button has no text content.', 'accessibility-lab' ),
 				'warning_msg' => __( 'Consider adding descriptive text to this button.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 		validation_api_register_block_check(
@@ -203,7 +204,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Buttons with navigation intent must have a valid URL.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This button link is missing or invalid.', 'accessibility-lab' ),
 				'warning_msg' => __( 'This button link may be invalid.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 	}
@@ -219,7 +219,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Tables must have a header section or first-row header cells.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This table has no headers; screen readers cannot navigate it.', 'accessibility-lab' ),
 				'warning_msg' => __( 'Consider adding table headers.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 	}
@@ -235,7 +234,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Heading levels must not skip ranks (e.g. H2 → H4).', 'accessibility-lab' ),
 				'error_msg'   => __( 'This heading skips a level.', 'accessibility-lab' ),
 				'warning_msg' => __( 'This heading may skip a level.', 'accessibility-lab' ),
-				'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 			)
 		);
 	}
@@ -260,7 +258,6 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 					),
 					'error_msg'   => __( 'A title is required.', 'accessibility-lab' ),
 					'warning_msg' => __( 'A title is recommended.', 'accessibility-lab' ),
-					'plugin_title' => __( 'Accessibility Lab: core blocks', 'accessibility-lab' ),
 				)
 			);
 		}
