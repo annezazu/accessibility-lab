@@ -9,20 +9,28 @@
 
 import { Page } from '@wordpress/admin-ui';
 import apiFetch from '@wordpress/api-fetch';
-import { Button, SnackbarList, Spinner } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { Button, SnackbarList } from '@wordpress/components';
+// The `/wp` subpath is the build intended for plugins compiled with
+// @wordpress/scripts: it bundles components and private-apis while leaving
+// the singletons (data, hooks, i18n, date) external, so we neither depend on
+// core's private-apis allowlist nor bind to whatever component version a
+// given WordPress release happens to ship.
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews/wp';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 
 import { LEVEL_OPTIONS, SeveritySelect } from './components/SeveritySelect';
-import type { Action, Field, View } from '@wordpress/dataviews';
+import type { Action, Field, View } from '@wordpress/dataviews/wp';
 import type { ChecksPayload, Level, OverridesPayload, Row } from './types';
 import { checksToRows, rowsToOverrides } from './utils/transform';
 
 const CHECKS_PATH = '/wp-validation/v1/checks';
 const OVERRIDES_PATH = '/accessibility-lab/v1/validation-settings';
+
+// Stable identity so an empty dataset doesn't retrigger memos each render.
+const EMPTY_ARRAY: Row[] = [];
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
@@ -49,7 +57,8 @@ function Snackbars(): JSX.Element {
 }
 
 export function App(): JSX.Element {
-	const [ rows, setRows ] = useState< Row[] | null >( null );
+	const [ rows, setRows ] = useState< Row[] >( EMPTY_ARRAY );
+	const [ isLoading, setIsLoading ] = useState( true );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const [ isDirty, setIsDirty ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
@@ -65,7 +74,6 @@ export function App(): JSX.Element {
 				setRows( checksToRows( checks, settings.overrides ?? {} ) );
 			} )
 			.catch( () => {
-				setRows( [] );
 				createErrorNotice(
 					__(
 						'Failed to load validation settings.',
@@ -75,7 +83,8 @@ export function App(): JSX.Element {
 						type: 'snackbar',
 					}
 				);
-			} );
+			} )
+			.finally( () => setIsLoading( false ) );
 	}, [ createErrorNotice ] );
 
 	// Nothing is persisted until Save, so guard against losing edits.
@@ -93,7 +102,7 @@ export function App(): JSX.Element {
 
 	const handleLevelChange = useCallback( ( id: string, level: Level ) => {
 		setRows( ( current ) =>
-			( current ?? [] ).map( ( row ) =>
+			current.map( ( row ) =>
 				row.id === id
 					? {
 							...row,
@@ -109,7 +118,7 @@ export function App(): JSX.Element {
 	const handleReset = useCallback( ( items: Row[] ) => {
 		const ids = new Set( items.map( ( item ) => item.id ) );
 		setRows( ( current ) =>
-			( current ?? [] ).map( ( row ) =>
+			current.map( ( row ) =>
 				ids.has( row.id )
 					? { ...row, level: row.default_level, has_override: false }
 					: row
@@ -119,9 +128,6 @@ export function App(): JSX.Element {
 	}, [] );
 
 	const handleSave = useCallback( async () => {
-		if ( ! rows ) {
-			return;
-		}
 		setIsSaving( true );
 		try {
 			const saved = await apiFetch< OverridesPayload >( {
@@ -133,7 +139,7 @@ export function App(): JSX.Element {
 			// reflected in the table rather than silently kept in local state.
 			const accepted = saved.overrides ?? {};
 			setRows( ( current ) =>
-				( current ?? [] ).map( ( row ) => {
+				current.map( ( row ) => {
 					const override = accepted[ row.id ];
 					return {
 						...row,
@@ -164,7 +170,7 @@ export function App(): JSX.Element {
 	// Only list plugins that actually registered a check on this site.
 	const pluginElements = useMemo( () => {
 		const names = [
-			...new Set( ( rows ?? [] ).map( ( row ) => row.plugin_title ) ),
+			...new Set( rows.map( ( row ) => row.plugin_title ) ),
 		].sort();
 		return names.map( ( name ) => ( { value: name, label: name } ) );
 	}, [ rows ] );
@@ -173,34 +179,43 @@ export function App(): JSX.Element {
 		() => [
 			{
 				id: 'title',
+				type: 'text',
 				label: __( 'Check', 'accessibility-lab' ),
 				enableGlobalSearch: true,
 				enableSorting: true,
 				enableHiding: false,
+				filterBy: false,
 			},
 			{
 				// The slug is what a developer greps for, so keep it
 				// searchable even though it never gets its own column.
 				id: 'name',
+				type: 'text',
 				label: __( 'Check slug', 'accessibility-lab' ),
 				enableGlobalSearch: true,
 				enableSorting: false,
+				filterBy: false,
 			},
 			{
 				id: 'description',
+				type: 'text',
 				label: __( 'Description', 'accessibility-lab' ),
 				enableGlobalSearch: true,
 				enableSorting: false,
 				enableHiding: false,
+				filterBy: false,
 			},
 			{
 				id: 'target',
+				type: 'text',
 				label: __( 'Target', 'accessibility-lab' ),
 				enableGlobalSearch: true,
 				enableSorting: true,
+				filterBy: false,
 			},
 			{
 				id: 'check_type',
+				type: 'text',
 				label: __( 'Type', 'accessibility-lab' ),
 				enableSorting: true,
 				elements: [
@@ -214,25 +229,33 @@ export function App(): JSX.Element {
 						label: __( 'Editor', 'accessibility-lab' ),
 					},
 				],
-				filterBy: { isPrimary: true, operators: [ 'is' ] },
+				filterBy: {
+					isPrimary: true,
+					operators: [ 'isAny', 'isNone' ],
+				},
 			},
 			{
 				id: 'plugin_title',
+				type: 'text',
 				label: __( 'Plugin', 'accessibility-lab' ),
 				enableSorting: true,
 				enableGlobalSearch: true,
 				elements: pluginElements,
-				filterBy: { operators: [ 'is' ] },
+				filterBy: { operators: [ 'isAny', 'isNone' ] },
 			},
 			{
 				id: 'level',
+				type: 'text',
 				label: __( 'Level', 'accessibility-lab' ),
 				enableSorting: false,
 				elements: LEVEL_OPTIONS.map( ( { value, label } ) => ( {
 					value,
 					label,
 				} ) ),
-				filterBy: { isPrimary: true, operators: [ 'is' ] },
+				filterBy: {
+					isPrimary: true,
+					operators: [ 'isAny', 'isNone' ],
+				},
 				render: ( { item }: { item: Row } ) => (
 					<SeveritySelect
 						value={ item.level }
@@ -260,22 +283,9 @@ export function App(): JSX.Element {
 	);
 
 	const { data, paginationInfo } = useMemo(
-		() => filterSortAndPaginate( rows ?? [], view, fields ),
+		() => filterSortAndPaginate( rows, view, fields ),
 		[ rows, view, fields ]
 	);
-
-	if ( ! rows ) {
-		return (
-			<Page title={ __( 'Validation', 'accessibility-lab' ) }>
-				<p role="status" aria-live="polite">
-					<Spinner />
-					<span className="screen-reader-text">
-						{ __( 'Loading…', 'accessibility-lab' ) }
-					</span>
-				</p>
-			</Page>
-		);
-	}
 
 	return (
 		<Page
@@ -302,6 +312,7 @@ export function App(): JSX.Element {
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
+				isLoading={ isLoading }
 				paginationInfo={ paginationInfo }
 				actions={ actions }
 				defaultLayouts={ { table: {} } }

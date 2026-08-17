@@ -38,6 +38,8 @@ Third parties integrate by calling the same `validation_api_register_*` function
 
 Severity overrides are stored in the `validation_api_settings` option, keyed by check id (scope, namespace, target, and check name — so the same check name registered against two block types is configured independently). Checks registered with `'configurable' => false` are omitted from the table and cannot be overridden.
 
+The settings screen is built on `@wordpress/dataviews`, imported from the `@wordpress/dataviews/wp` subpath — the build intended for plugins compiled with `@wordpress/scripts`. WordPress registers no `wp-dataviews` script or style handle, so the package, its stylesheet, and the `@wordpress/theme` design tokens it depends on all ship inside the plugin bundle. That makes `build/validation-settings.js` large (~1.9 MB); it loads on that one admin screen only.
+
 ## Development
 
 ```bash

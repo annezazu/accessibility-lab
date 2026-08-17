@@ -3,19 +3,20 @@
  *
  * @wordpress/dataviews is a bundled package, not a script handle WordPress
  * registers, so its stylesheet has to be pulled in here rather than enqueued.
+ *
+ * The design tokens must come first: since dataviews 12.0.0 the tokens are no
+ * longer embedded in its stylesheet, and every `--wpds-*` reference in it is
+ * unfallbacked. Core covers this by making `wp-theme` a dependency of
+ * `wp-components`, but WordPress registers no such style handle, so the
+ * `:root` custom properties have to be defined here before anything reads
+ * them. Without this the table renders with no colors, radii, or spacing.
  */
 
+// Note the concrete path: the package advertises this file as
+// `@wordpress/theme/design-tokens.css` via its exports map, but postcss-import
+// resolves real paths rather than exports aliases.
+@import "@wordpress/theme/prebuilt/css/design-tokens.css";
 @import "@wordpress/dataviews/build-style/style.css";
-
-// Sit flush against the admin menu by cancelling #wpcontent's padding, so the
-// table gets the full width of the admin content area.
-#accessibility-lab-validation-settings {
-	margin-inline-start: -20px;
-
-	@media screen and (max-width: 782px) {
-		margin-inline-start: -10px;
-	}
-}
 
 .accessibility-lab-validation-page {
 	box-sizing: border-box;

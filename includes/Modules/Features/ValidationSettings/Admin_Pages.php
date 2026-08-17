@@ -45,6 +45,22 @@ final class Admin_Pages {
 	}
 
 	public function render(): void {
+		// Critical styles are inlined rather than shipped in the bundled
+		// stylesheet so they apply before it loads, avoiding a layout shift on
+		// first paint. This mirrors how core sets up its own full-width
+		// DataViews admin screens.
+		?>
+		<style>
+			#wpwrap { overflow-y: auto; }
+			body.js #wpcontent { padding-inline-start: 0; }
+			body.js #wpbody-content { padding-bottom: 0; }
+			body.js #wpfooter { display: none; }
+
+			@media (min-width: 782px) {
+				#wpwrap { overflow-y: initial; }
+			}
+		</style>
+		<?php
 		// The React app renders the page chrome with the `Page` component
 		// from @wordpress/admin-ui, so this is only a mount point.
 		echo '<div id="accessibility-lab-validation-settings"></div>';
