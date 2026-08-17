@@ -14,7 +14,6 @@ use AccessibilityLab\Modules\Experiments\Block_Validation_Framework;
 use AccessibilityLab\Modules\Experiments\Heading_Order;
 use AccessibilityLab\Modules\Features\Core_Block_Validation_Rules;
 use AccessibilityLab\Modules\Features\Media_Library_View_Config;
-use AccessibilityLab\Modules\Features\Skip_Link_Generator;
 use AccessibilityLab\Modules\Features\Validation_Settings;
 use AccessibilityLab\REST\Modules_Controller;
 
@@ -115,7 +114,6 @@ final class Plugin {
 	 * Register every module shipped with this plugin.
 	 */
 	private function register_first_party_modules(): void {
-		$this->registry->register( new Skip_Link_Generator() );
 		$this->registry->register( new Media_Library_View_Config() );
 		$this->registry->register( new Heading_Order() );
 		$this->registry->register( new Block_Validation_Framework() );

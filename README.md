@@ -2,7 +2,7 @@
 
 Umbrella WordPress plugin for accessibility **Features** and **Experiments**, each labelled with a **Track** describing whether it is aimed at Core adoption or shipped as a standalone practical tool.
 
-## Two orthogonal dimensions
+## Two dimensions for modules
 
 Every module answers two questions:
 
@@ -20,8 +20,7 @@ Either bucket can live on either track. Credits are optional metadata any module
 
 | Module | Bucket | Track | Adopted from |
 |---|---|---|---|
-| Skip-link generator | Feature | Practical | wp-accessibility (Joe Dolson) |
-| Media Library: add view options | Feature | Practical | WordPress core / Trac #65775 |
+| Media Library: disable infinite scroll by default | Feature | Practical | WordPress core |
 | Heading-order validation | Experiment | TBD | — |
 | Block Validation Framework | Experiment | Core-track | validation-api (Troy Chaplin) |
 | Core block accessibility rules | Feature | Practical | validation-api-core-blocks (Troy Chaplin) |
@@ -179,8 +178,7 @@ includes/
   REST/Modules_Controller.php  /accessibility-lab/v1/modules
   Modules/
     Features/
-      Skip_Link_Generator.php
-      Media_Library_View_Config.php
+      Media_Library_Infinite_Scroll_Optout.php
       Core_Block_Validation_Rules.php
       Validation_Settings.php
       ValidationSettings/
