@@ -14,7 +14,7 @@ Real-time content validation in the block editor. Any plugin can register checks
   - [Validating inner block structure](#5-validating-inner-block-structure)
   - [Validating post meta](#6-validating-post-meta)
   - [Validating editor concerns](#7-validating-editor-concerns)
-  - [Enqueuing your script](#8-enqueuing-your-script)
+  - [Loading your filters](#8-loading-your-filters)
 - [Reference](#reference)
 
 ---
@@ -295,9 +295,38 @@ addFilter(
 
 Post attributes come from the editor store instead — `select( editorStore ).getEditedPostAttribute( 'title' )` and friends. [src/editor/core-block-rules/post-title.ts](../../src/editor/core-block-rules/post-title.ts) shows that variant.
 
-### 8. Enqueuing your script
+### 8. Loading your filters
 
-Your filters must be registered before the runtime reads them, so depend on the framework's script handle:
+Your filters have to be registered by the time the runtime evaluates them. There are two ways to get there.
+
+#### Co-locate with the block
+
+For block-attribute checks, the simplest option is to keep the validation next to the block it validates and let the block's own editor script carry it. Add a `validation.js` beside `edit.js`:
+
+```text
+src/blocks/callout/
+├── block.json
+├── edit.js
+├── index.js
+├── save.js
+└── validation.js   ← addFilter( 'editor.validateBlock', … )
+```
+
+and import it for its side effect from `edit.js` (or `index.js`):
+
+```js
+import './validation';
+```
+
+`block.json`'s `editorScript` is already enqueued by `register_block_type()` whenever the editor loads, so the filter registers with no extra PHP at all — no `wp_enqueue_script`, no dependency guard.
+
+This also degrades cleanly. `addFilter()` comes from `@wordpress/hooks` and doesn't care whether the framework is present; if the module is disabled, nothing ever calls the hook and your filter simply never runs. Keeping a block's rules in its own directory means moving or removing the block takes its validation with it.
+
+Use this for `editor.validateBlock`. Meta and editor-scope checks aren't tied to a block, so they need the shared bundle below.
+
+#### A shared editor bundle
+
+For meta and editor-scope filters — or block filters you'd rather keep together — enqueue one script and depend on the framework's handle:
 
 ```php
 add_action( 'enqueue_block_editor_assets', function () {
