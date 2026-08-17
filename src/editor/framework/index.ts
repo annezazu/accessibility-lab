@@ -5,6 +5,16 @@
  * filters into the `accessibility-lab/validation` data store, drives visual
  * indicators, and locks post save when errors are present.
  *
+ * Filter signatures — see docs/features/validation-api.md:
+ *
+ *   editor.validateBlock  ( isValid, blockName, attributes, checkName, check, clientId )
+ *   editor.validateMeta   ( isValid, metaKey, value, check )
+ *   editor.validateEditor ( isValid, checkName, check )
+ *
+ * Each returns a boolean, and must return `isValid` untouched for checks it
+ * does not own. Editor-scope filters get no document state and are expected
+ * to read it from the editor/block-editor stores themselves.
+ *
  * Architecture: everything is driven by React hooks mounted inside the
  * PluginSidebar render tree — not by top-level subscribe() calls on the
  * data registry. Registry-wide subscribers fire on every dispatch across
@@ -87,7 +97,11 @@ function computeBlockIssues(
 				blockName,
 				attributes,
 				check.name,
-				check
+				check,
+				// Attributes alone can't express structural rules; the
+				// clientId lets a filter reach the block tree via
+				// select( blockEditorStore ).getBlock( clientId ).
+				clientId
 			) as boolean;
 		} catch {
 			continue;

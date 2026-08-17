@@ -30,11 +30,11 @@ Either bucket can live on either track. Credits are optional metadata any module
 
 Three of the first-party modules compose into a full block-editor validation subsystem:
 
-1. **Block Validation Framework** — a plugin API (`validation_api_register_block_check()`, `validation_api_register_meta_check()`, `validation_api_register_editor_check()`), a `core/validation` data store, real-time debounced validation, publish locking, a Validation sidebar, and REST introspection at `GET /wp-validation/v1/checks`.
+1. **Block Validation Framework** — a plugin API (`validation_api_register_block_check()`, `validation_api_register_meta_check()`, `validation_api_register_editor_check()`), an `accessibility-lab/validation` data store, real-time debounced validation, publish locking, a Validation sidebar, and REST introspection at `GET /wp-validation/v1/checks`.
 2. **Core block accessibility rules** — WCAG-oriented checks for `core/image`, `core/button`, `core/table`, `core/heading`, `core/gallery`, plus a required post/page title editor check.
 3. **Validation settings** — a single **Validation** admin page listing every registered check in a DataViews table, with search, sorting, pagination, and filters for check type, registering plugin, and severity. Admins set each check's severity to Error, Warning, or Disabled, and reset overridden checks back to their registered default. Third-party plugins that register checks appear in that table automatically, with zero admin-menu code.
 
-Third parties integrate by calling the same `validation_api_register_*` functions and hooking the `editor.validateBlock` / `editor.validateMeta` / `editor.validateEditor` JS filters.
+Third parties integrate by calling the same `validation_api_register_*` functions and hooking the `editor.validateBlock` / `editor.validateMeta` / `editor.validateEditor` JS filters. **See [docs/features/validation-api.md](docs/features/validation-api.md)** for the full integration guide, including the filter signatures and worked PHP + JS examples for each scope.
 
 Severity overrides are stored in the `validation_api_settings` option, keyed by check id (scope, namespace, target, and check name — so the same check name registered against two block types is configured independently). Checks registered with `'configurable' => false` are omitted from the table and cannot be overridden.
 
@@ -90,10 +90,6 @@ add_action( 'init', function () {
 } );
 ```
 
-`name` is the slug: it identifies the check in the override key and is the value passed to the JS filter, so keep it stable. `title` is the human label shown on the Validation settings page and can be reworded freely; it falls back to `name` when omitted.
-
-`validation_api_register_namespace()` sets the plugin name shown in the settings table's **Plugin** column and filter. Call it once — order doesn't matter, so it can run before or after your checks. Skip it and checks are credited to the raw namespace slug. A check may still pass its own `plugin_title` to override the namespace title for that one row.
-
 And the matching JS filter in your editor bundle:
 
 ```javascript
@@ -101,13 +97,15 @@ import { addFilter } from '@wordpress/hooks';
 addFilter(
 	'editor.validateBlock',
 	'my-plugin/title-check',
-	( isValid, blockType, attributes, checkName ) => {
-		if ( blockType !== 'my-plugin/my-block' ) return isValid;
+	( isValid, blockName, attributes, checkName ) => {
+		if ( blockName !== 'my-plugin/my-block' ) return isValid;
 		if ( checkName === 'has_title' ) return !! attributes.title?.trim();
 		return isValid;
 	}
 );
 ```
+
+That's the block-attribute case. **[docs/features/validation-api.md](docs/features/validation-api.md)** covers the rest: the full argument reference, the signatures for all three filters, and worked examples for inner block structure, post meta, and editor-scope checks.
 
 ## Structure
 
