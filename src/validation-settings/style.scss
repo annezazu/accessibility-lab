@@ -1,43 +1,30 @@
 /**
  * Validation Settings admin — layout.
  *
- * Same centered/constrained pattern as the main lab settings page.
+ * @wordpress/dataviews is a bundled package, not a script handle WordPress
+ * registers, so its stylesheet has to be pulled in here rather than enqueued.
  */
 
-.accessibility-lab-page-wrapper {
+@import "@wordpress/dataviews/build-style/style.css";
+
+// Sit flush against the admin menu by cancelling #wpcontent's padding, so the
+// table gets the full width of the admin content area.
+#accessibility-lab-validation-settings {
+	margin-inline-start: -20px;
+
+	@media screen and (max-width: 782px) {
+		margin-inline-start: -10px;
+	}
+}
+
+.accessibility-lab-validation-page {
 	box-sizing: border-box;
 	width: 100%;
-	max-width: 860px;
-	margin: 0 auto;
-	padding: 24px;
+	max-width: none;
+	min-height: calc(100vh - 32px);
 
-	.wp-list-table {
-		margin-block-start: 16px;
-
-		th, td {
-			vertical-align: middle;
-			padding: 12px 10px;
-		}
-
-		td strong {
-			display: block;
-			margin-block-end: 2px;
-		}
-
-		td span {
-			color: var(--wpds-color-content-onSurface-secondary, #757575);
-			font-size: 12px;
-			line-height: 1.5;
-		}
-
-		td code {
-			font-size: 12px;
-			background: transparent;
-		}
-
-		// The SelectControl inside the "Level" column shouldn't be full-width.
-		.components-select-control {
-			max-width: 140px;
-		}
+	// The severity picker sits in a cell — keep it from stretching the column.
+	.components-select-control {
+		max-width: 140px;
 	}
 }

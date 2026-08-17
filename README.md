@@ -32,9 +32,11 @@ Three of the first-party modules compose into a full block-editor validation sub
 
 1. **Block Validation Framework** — a plugin API (`validation_api_register_block_check()`, `validation_api_register_meta_check()`, `validation_api_register_editor_check()`), a `core/validation` data store, real-time debounced validation, publish locking, a Validation sidebar, and REST introspection at `GET /wp-validation/v1/checks`.
 2. **Core block accessibility rules** — WCAG-oriented checks for `core/image`, `core/button`, `core/table`, `core/heading`, `core/gallery`, plus a required post/page title editor check.
-3. **Validation settings** — admin UI that auto-generates one settings page per registered check namespace. Third-party plugins that register checks get their own settings page under **A11y Lab: Validation** with zero admin-menu code.
+3. **Validation settings** — a single **Validation** admin page listing every registered check in a DataViews table, with search, sorting, pagination, and filters for check type, registering plugin, and severity. Admins set each check's severity to Error, Warning, or Disabled, and reset overridden checks back to their registered default. Third-party plugins that register checks appear in that table automatically, with zero admin-menu code.
 
 Third parties integrate by calling the same `validation_api_register_*` functions and hooking the `editor.validateBlock` / `editor.validateMeta` / `editor.validateEditor` JS filters.
+
+Severity overrides are stored in the `validation_api_settings` option, keyed by check id (scope, namespace, target, and check name — so the same check name registered against two block types is configured independently). Checks registered with `'configurable' => false` are omitted from the table and cannot be overridden.
 
 ## Development
 
@@ -116,7 +118,7 @@ includes/
       CoreBlockRules/...         (per-block PHP registration in one file per group)
       Validation_Settings.php
       ValidationSettings/
-        Admin_Pages.php          Auto per-namespace submenu generator
+        Admin_Pages.php          Registers the Validation admin page
         Level_Override.php       Hooks validation_api_check_level
         Rest_Controller.php      /accessibility-lab/v1/validation-settings
     Experiments/
@@ -124,13 +126,14 @@ includes/
       Block_Validation_Framework.php
       BlockValidation/
         Check_Registry.php       In-memory check store
+        Check_Key.php            Stable check id / override key
         Global_Functions.php     validation_api_register_* globals
         Rest_Controller.php      /wp-validation/v1/checks
 src/
   settings/index.tsx             Main lab settings React app
   editor/framework/              Validation runtime (store, sidebar, publish lock)
   editor/core-block-rules/       Per-block JS validators
-  validation-settings/index.tsx  Auto per-namespace admin React app
+  validation-settings/           DataViews admin app for severity overrides
 webpack.config.js                Multi-entry build config
 ```
 

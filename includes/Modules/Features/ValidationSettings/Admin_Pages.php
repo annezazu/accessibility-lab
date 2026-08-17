@@ -1,15 +1,11 @@
 <?php
 /**
- * Auto-generates one admin submenu per registered check namespace.
+ * Admin page for validation severity overrides.
  *
- * Structure:
- *   Settings > Accessibility Lab           (existing lab settings)
- *   Settings > Accessibility Lab: Validation  (parent for validation)
- *     ├── <namespace 1>
- *     ├── <namespace 2>
- *     └── ...
- *
- * Each submenu deep-links into the same React app with ?namespace=<slug>.
+ * A single top-level "Validation" page listing every registered check in a
+ * DataViews table. The registering plugin is a filterable column rather than
+ * a separate page, so a site with checks from several plugins still has one
+ * place to configure all of them.
  *
  * @package AccessibilityLab
  */
@@ -19,11 +15,13 @@ declare( strict_types = 1 );
 namespace AccessibilityLab\Modules\Features\ValidationSettings;
 
 use AccessibilityLab\Modules\Experiments\Block_Validation_Framework;
+use WP_Block_Type_Registry;
 
 final class Admin_Pages {
 
-	public const PARENT_SLUG = 'accessibility-lab-validation';
-	public const HOOK_PREFIX = 'accessibility-lab_page_';
+	public const SLUG = 'accessibility-lab-validation';
+
+	private string $page_hook = '';
 
 	public function register(): void {
 		add_action( 'admin_menu', array( $this, 'add_menu' ), 20 );
@@ -31,63 +29,29 @@ final class Admin_Pages {
 	}
 
 	public function add_menu(): void {
-		$registry = Block_Validation_Framework::shared_registry();
-		if ( ! $registry ) {
+		if ( ! Block_Validation_Framework::shared_registry() ) {
 			return;
 		}
 
-		$namespaces = $this->collect_namespaces( $registry );
-		if ( empty( $namespaces ) ) {
-			return;
-		}
-
-		// Parent menu under the "Accessibility Lab" top-level (added by
-		// Settings_Page under Settings → …). We add our own parent submenu.
-		add_menu_page(
+		$this->page_hook = (string) add_menu_page(
 			__( 'Accessibility Lab: Validation', 'accessibility-lab' ),
 			__( 'Validation', 'accessibility-lab' ),
 			'manage_options',
-			self::PARENT_SLUG,
+			self::SLUG,
 			array( $this, 'render' ),
 			'dashicons-yes-alt',
 			81
 		);
-
-		$first = true;
-		foreach ( $namespaces as $slug => $label ) {
-			// The `namespace` value is supplied by third-party plugins via
-			// `validation_api_register_block_check`. Sanitize before using
-			// it in a menu slug so a malformed value can't create a slug
-			// with unexpected characters.
-			$safe_slug = sanitize_key( $slug );
-			add_submenu_page(
-				self::PARENT_SLUG,
-				$label,
-				$label,
-				'manage_options',
-				$first ? self::PARENT_SLUG : self::PARENT_SLUG . '-' . $safe_slug,
-				array( $this, 'render' )
-			);
-			$first = false;
-		}
-
-		// Remove the auto-duplicated first submenu label so it uses the
-		// namespace name of the first registered plugin.
-		global $submenu;
-		if ( isset( $submenu[ self::PARENT_SLUG ][0] ) ) {
-			$first_ns = array_key_first( $namespaces );
-			$submenu[ self::PARENT_SLUG ][0][0] = $namespaces[ $first_ns ];
-		}
 	}
 
 	public function render(): void {
+		// The React app renders the page chrome with the `Page` component
+		// from @wordpress/admin-ui, so this is only a mount point.
 		echo '<div id="accessibility-lab-validation-settings"></div>';
 	}
 
-	public function enqueue( string $hook ): void {
-		if ( 0 !== strpos( $hook, 'toplevel_page_' . self::PARENT_SLUG )
-			&& 0 !== strpos( $hook, 'a11y-lab-validation_page_' )
-			&& false === strpos( $hook, self::PARENT_SLUG ) ) {
+	public function enqueue( string $hook_suffix ): void {
+		if ( '' === $this->page_hook || $hook_suffix !== $this->page_hook ) {
 			return;
 		}
 
@@ -105,6 +69,22 @@ final class Admin_Pages {
 			true
 		);
 
+		wp_set_script_translations( 'accessibility-lab-validation-settings', 'accessibility-lab' );
+
+		// Checks identify their target by slug (`core/image`, `post`). Ship
+		// the human labels alongside so the table can read as prose without
+		// a second round trip per row.
+		wp_add_inline_script(
+			'accessibility-lab-validation-settings',
+			'window.accessibilityLabValidation = ' . wp_json_encode(
+				array(
+					'blockTitles'    => $this->get_block_titles(),
+					'postTypeLabels' => $this->get_post_type_labels(),
+				)
+			) . ';',
+			'before'
+		);
+
 		$style_file = ACCESSIBILITY_LAB_DIR . '/build/style-validation-settings.css';
 		if ( file_exists( $style_file ) ) {
 			wp_enqueue_style(
@@ -117,24 +97,30 @@ final class Admin_Pages {
 	}
 
 	/**
-	 * @return array<string, string> Map of namespace slug -> human label.
+	 * @return array<string, string> Block type name -> human title.
 	 */
-	private function collect_namespaces( $registry ): array {
+	private function get_block_titles(): array {
 		$out = array();
-		foreach ( $registry->all_by_scope() as $scope => $checks ) {
-			foreach ( $checks as $check ) {
-				$ns = (string) ( $check['namespace'] ?? '' );
-				if ( '' === $ns || isset( $out[ $ns ] ) ) {
-					continue;
-				}
-				$label = (string) ( $check['plugin_title'] ?? '' );
-				if ( '' === $label ) {
-					$label = $ns;
-				}
-				$out[ $ns ] = $label;
+		foreach ( WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $block_type ) {
+			$title = isset( $block_type->title ) ? (string) $block_type->title : '';
+			if ( '' !== $title ) {
+				$out[ (string) $name ] = $title;
 			}
 		}
-		ksort( $out );
+		return $out;
+	}
+
+	/**
+	 * @return array<string, string> Post type name -> singular label.
+	 */
+	private function get_post_type_labels(): array {
+		$out = array();
+		foreach ( get_post_types( array(), 'objects' ) as $name => $post_type ) {
+			$label = isset( $post_type->labels->singular_name ) ? (string) $post_type->labels->singular_name : '';
+			if ( '' !== $label ) {
+				$out[ (string) $name ] = $label;
+			}
+		}
 		return $out;
 	}
 }
