@@ -107,6 +107,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_image_alt_text',
+				'title'       => __( 'Alt text required', 'accessibility-lab' ),
 				'level'       => 'error',
 				'description' => __( 'Images must have alt text unless marked decorative.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This image is missing alt text.', 'accessibility-lab' ),
@@ -119,6 +120,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_image_alt_text_length',
+				'title'       => __( 'Alt text length', 'accessibility-lab' ),
 				'level'       => 'warning',
 				'description' => __( 'Alt text should be 125 characters or fewer.', 'accessibility-lab' ),
 				'error_msg'   => __( 'Alt text exceeds 125 characters.', 'accessibility-lab' ),
@@ -131,6 +133,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_image_alt_caption_match',
+				'title'       => __( 'Alt text duplicates caption', 'accessibility-lab' ),
 				'level'       => 'error',
 				'description' => __( 'Alt text and caption must not be identical.', 'accessibility-lab' ),
 				'error_msg'   => __( 'Alt text is identical to the caption; screen readers will hear the same text twice.', 'accessibility-lab' ),
@@ -143,6 +146,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_image_alt_text_patterns',
+				'title'       => __( 'Descriptive alt text', 'accessibility-lab' ),
 				'level'       => 'error',
 				'description' => __( 'Alt text must be descriptive; filenames and phrases like "image of" are rejected.', 'accessibility-lab' ),
 				'error_msg'   => __( 'Alt text is not descriptive (filename or generic phrase detected).', 'accessibility-lab' ),
@@ -152,12 +156,19 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 		);
 
 		// Gallery: same checks applied to each image inside a gallery block.
-		foreach ( array( 'check_image_alt_text', 'check_image_alt_text_length', 'check_image_alt_caption_match', 'check_image_alt_text_patterns' ) as $check_name ) {
+		$gallery_checks = array(
+			'check_image_alt_text'          => __( 'Gallery alt text required', 'accessibility-lab' ),
+			'check_image_alt_text_length'   => __( 'Gallery alt text length', 'accessibility-lab' ),
+			'check_image_alt_caption_match' => __( 'Gallery alt text duplicates caption', 'accessibility-lab' ),
+			'check_image_alt_text_patterns' => __( 'Gallery descriptive alt text', 'accessibility-lab' ),
+		);
+		foreach ( $gallery_checks as $check_name => $check_title ) {
 			validation_api_register_block_check(
 				'core/gallery',
 				array(
 					'namespace'   => self::NS,
 					'name'        => 'gallery_' . $check_name,
+					'title'       => $check_title,
 					'level'       => 'warning',
 					'description' => __( 'Applies image accessibility checks to every image in a gallery.', 'accessibility-lab' ),
 					'error_msg'   => __( 'One or more gallery images fail an accessibility check.', 'accessibility-lab' ),
@@ -174,6 +185,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_button_text',
+				'title'       => __( 'Button text required', 'accessibility-lab' ),
 				'level'       => 'error',
 				'description' => __( 'Buttons must have descriptive text.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This button has no text content.', 'accessibility-lab' ),
@@ -186,6 +198,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_button_link',
+				'title'       => __( 'Button link required', 'accessibility-lab' ),
 				'level'       => 'error',
 				'description' => __( 'Buttons with navigation intent must have a valid URL.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This button link is missing or invalid.', 'accessibility-lab' ),
@@ -201,6 +214,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_table_headers',
+				'title'       => __( 'Table headers required', 'accessibility-lab' ),
 				'level'       => 'error',
 				'description' => __( 'Tables must have a header section or first-row header cells.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This table has no headers; screen readers cannot navigate it.', 'accessibility-lab' ),
@@ -216,6 +230,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 			array(
 				'namespace'   => self::NS,
 				'name'        => 'check_heading_rank',
+				'title'       => __( 'Heading level order', 'accessibility-lab' ),
 				'level'       => 'error',
 				'description' => __( 'Heading levels must not skip ranks (e.g. H2 → H4).', 'accessibility-lab' ),
 				'error_msg'   => __( 'This heading skips a level.', 'accessibility-lab' ),
@@ -232,6 +247,11 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				array(
 					'namespace'   => self::NS,
 					'name'        => 'post_title_required_' . $post_type,
+					'title'       => sprintf(
+						/* translators: %s: post type slug. */
+						__( 'Title required on %s', 'accessibility-lab' ),
+						$post_type
+					),
 					'level'       => 'error',
 					'description' => sprintf(
 						/* translators: %s: post type slug. */

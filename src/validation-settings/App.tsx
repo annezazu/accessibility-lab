@@ -30,8 +30,8 @@ const DEFAULT_VIEW: View = {
 	filters: [],
 	page: 1,
 	perPage: 25,
-	sort: { field: 'name', direction: 'asc' },
-	titleField: 'name',
+	sort: { field: 'title', direction: 'asc' },
+	titleField: 'title',
 	descriptionField: 'description',
 	fields: [ 'target', 'check_type', 'plugin_title', 'level' ],
 };
@@ -172,11 +172,19 @@ export function App(): JSX.Element {
 	const fields = useMemo< Field< Row >[] >(
 		() => [
 			{
-				id: 'name',
+				id: 'title',
 				label: __( 'Check', 'accessibility-lab' ),
 				enableGlobalSearch: true,
 				enableSorting: true,
 				enableHiding: false,
+			},
+			{
+				// The slug is what a developer greps for, so keep it
+				// searchable even though it never gets its own column.
+				id: 'name',
+				label: __( 'Check slug', 'accessibility-lab' ),
+				enableGlobalSearch: true,
+				enableSorting: false,
 			},
 			{
 				id: 'description',

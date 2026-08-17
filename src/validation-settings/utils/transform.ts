@@ -71,6 +71,7 @@ export function checksToRows(
 			const override = overrides[ check.id ];
 			return {
 				id: check.id,
+				title: check.title || check.name,
 				name: check.name,
 				description: check.description,
 				check_type: SCOPE_LABELS[ check.scope ],

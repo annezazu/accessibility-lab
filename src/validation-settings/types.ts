@@ -16,7 +16,10 @@ export type Check = {
 	id: string;
 	scope: Scope;
 	namespace: string;
+	/** Slug used for keys and JS filters. */
 	name: string;
+	/** Human label; the framework falls back to `name` when unset. */
+	title: string;
 	level: Level;
 	resolved_level: Level;
 	description: string;
@@ -41,6 +44,7 @@ export type OverridesPayload = {
 /** One DataViews row. `id` doubles as the override key. */
 export type Row = {
 	id: string;
+	title: string;
 	name: string;
 	description: string;
 	check_type: CheckType;

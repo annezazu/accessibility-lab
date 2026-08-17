@@ -124,10 +124,20 @@ final class Check_Registry {
 	 * @return array<string, mixed>
 	 */
 	private function normalise( array $args, string $scope ): array {
+		$name = isset( $args['name'] ) ? (string) $args['name'] : '';
+
+		// `name` is a slug used for keys and filters; `title` is what admins
+		// read. Fall back to the slug so `title` stays optional.
+		$title = isset( $args['title'] ) ? (string) $args['title'] : '';
+		if ( '' === $title ) {
+			$title = $name;
+		}
+
 		return array(
 			'scope'         => $scope,
 			'namespace'     => isset( $args['namespace'] ) ? (string) $args['namespace'] : 'unknown',
-			'name'          => isset( $args['name'] ) ? (string) $args['name'] : '',
+			'name'          => $name,
+			'title'         => $title,
 			'level'         => isset( $args['level'] ) ? (string) $args['level'] : 'error',
 			'description'   => isset( $args['description'] ) ? (string) $args['description'] : '',
 			'error_msg'     => isset( $args['error_msg'] ) ? (string) $args['error_msg'] : '',
