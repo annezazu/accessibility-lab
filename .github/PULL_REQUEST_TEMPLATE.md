@@ -35,3 +35,10 @@ Please include a summary for this PR, noting whether this is something being Add
 > Fixed - Bug fix.
 > Security - Vulnerability.
 > Developer - Development related updates.
+
+## Checklist
+
+- [ ] I have read the [Contributing Guidelines](https://github.com/WordPress/accessibility-lab/blob/main/CONTRIBUTING.md)
+- [ ] `npm run lint` passes locally (JS, CSS, PHPCS, PHPStan)
+- [ ] I have manually verified this change using the steps in Testing Instructions
+- [ ] I have updated relevant documentation (README, CONTRIBUTING, docblocks) if needed
