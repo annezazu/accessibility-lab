@@ -1,43 +1,31 @@
 /**
  * Validation Settings admin — layout.
  *
- * Same centered/constrained pattern as the main lab settings page.
+ * @wordpress/dataviews is a bundled package, not a script handle WordPress
+ * registers, so its stylesheet has to be pulled in here rather than enqueued.
+ *
+ * The design tokens must come first: since dataviews 12.0.0 the tokens are no
+ * longer embedded in its stylesheet, and every `--wpds-*` reference in it is
+ * unfallbacked. Core covers this by making `wp-theme` a dependency of
+ * `wp-components`, but WordPress registers no such style handle, so the
+ * `:root` custom properties have to be defined here before anything reads
+ * them. Without this the table renders with no colors, radii, or spacing.
  */
 
-.accessibility-lab-page-wrapper {
+// Note the concrete path: the package advertises this file as
+// `@wordpress/theme/design-tokens.css` via its exports map, but postcss-import
+// resolves real paths rather than exports aliases.
+@import "@wordpress/theme/prebuilt/css/design-tokens.css";
+@import "@wordpress/dataviews/build-style/style.css";
+
+.accessibility-lab-validation-page {
 	box-sizing: border-box;
 	width: 100%;
-	max-width: 860px;
-	margin: 0 auto;
-	padding: 24px;
+	max-width: none;
+	min-height: calc(100vh - 32px);
 
-	.wp-list-table {
-		margin-block-start: 16px;
-
-		th, td {
-			vertical-align: middle;
-			padding: 12px 10px;
-		}
-
-		td strong {
-			display: block;
-			margin-block-end: 2px;
-		}
-
-		td span {
-			color: var(--wpds-color-content-onSurface-secondary, #757575);
-			font-size: 12px;
-			line-height: 1.5;
-		}
-
-		td code {
-			font-size: 12px;
-			background: transparent;
-		}
-
-		// The SelectControl inside the "Level" column shouldn't be full-width.
-		.components-select-control {
-			max-width: 140px;
-		}
+	// The severity picker sits in a cell — keep it from stretching the column.
+	.components-select-control {
+		max-width: 140px;
 	}
 }

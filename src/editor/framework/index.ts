@@ -5,6 +5,16 @@
  * filters into the `accessibility-lab/validation` data store, drives visual
  * indicators, and locks post save when errors are present.
  *
+ * Filter signatures — see docs/features/validation-api.md:
+ *
+ *   editor.validateBlock  ( isValid, blockName, attributes, checkName, check, clientId )
+ *   editor.validateMeta   ( isValid, metaKey, value, check )
+ *   editor.validateEditor ( isValid, checkName, check )
+ *
+ * Each returns a boolean, and must return `isValid` untouched for checks it
+ * does not own. Editor-scope filters get no document state and are expected
+ * to read it from the editor/block-editor stores themselves.
+ *
  * Architecture: everything is driven by React hooks mounted inside the
  * PluginSidebar render tree — not by top-level subscribe() calls on the
  * data registry. Registry-wide subscribers fire on every dispatch across
@@ -16,6 +26,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useRef } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
 import { addFilter, applyFilters } from '@wordpress/hooks';
+import { store as noticesStore } from '@wordpress/notices';
 
 import './store';
 import { VALIDATION_STORE, type Issue, type IssueSeverity } from './store';
@@ -87,7 +98,11 @@ function computeBlockIssues(
 				blockName,
 				attributes,
 				check.name,
-				check
+				check,
+				// Attributes alone can't express structural rules; the
+				// clientId lets a filter reach the block tree via
+				// select( blockEditorStore ).getBlock( clientId ).
+				clientId
 			) as boolean;
 		} catch {
 			continue;
@@ -360,6 +375,15 @@ export function useValidationSync(): void {
  */
 const LOCK_KEY = 'accessibility-lab-validation';
 
+/**
+ * Core writes every save success/failure notice under this one id — see
+ * getNotificationArgumentsForSaveFail() in
+ * packages/editor/src/store/utils/notice-builder.js. It is a bare literal
+ * there with no exported constant, hence the copy. Nothing clears it except
+ * the next save, which is why a rejected save leaves a notice behind.
+ */
+const SAVE_NOTICE_ID = 'editor-save';
+
 export function useValidationConsequences(): void {
 	const { hasErrors, hasWarnings } = useSelect( ( select ) => {
 		try {
@@ -381,7 +405,14 @@ export function useValidationConsequences(): void {
 		unlockPostSaving?: ( key: string ) => void;
 	};
 
+	const { removeNotice } = useDispatch( noticesStore ) as unknown as {
+		removeNotice?: ( id: string ) => void;
+	};
+
 	const lockedRef = useRef< boolean >( false );
+
+	// Whether *we* rejected a save, so we only clear a notice we caused.
+	const rejectedSaveRef = useRef< boolean >( false );
 
 	useEffect( () => {
 		try {
@@ -412,24 +443,62 @@ export function useValidationConsequences(): void {
 		};
 	}, [ hasErrors, hasWarnings ] );
 
-	// Also gate the actual save via editor.preSavePost so bypasses (autosave,
-	// keyboard shortcuts) still respect the lock.
+	// Safety net for programmatic savePost() calls. The Save and Publish
+	// buttons and Cmd+S all consult isPostSavingLocked() themselves, so the
+	// lock above already covers every route a person can take.
+	//
+	// Autosave and Preview deliberately pass through. Neither checks the lock,
+	// so rejecting them here surfaced a "Updating failed" notice for work the
+	// user never asked for — and blocking autosave risks losing a draft to
+	// protect content that is merely missing alt text, which is a bad trade.
 	useEffect( () => {
 		const filterName = 'editor.preSavePost';
 		const namespace = 'accessibility-lab/validation-safety-net';
-		addFilter( filterName, namespace, async ( edits: unknown ) => {
-			if ( lockedRef.current ) {
-				return Promise.reject(
-					new Error(
-						'Accessibility Lab: cannot save while validation errors remain.'
-					)
-				);
+		addFilter(
+			filterName,
+			namespace,
+			async (
+				edits: unknown,
+				options?: { isAutosave?: boolean; isPreview?: boolean }
+			) => {
+				if ( options?.isAutosave || options?.isPreview ) {
+					return edits;
+				}
+				if ( lockedRef.current ) {
+					rejectedSaveRef.current = true;
+					return Promise.reject(
+						new Error(
+							'Accessibility Lab: cannot save while validation errors remain.'
+						)
+					);
+				}
+				return edits;
 			}
-			return edits;
-		} );
+		);
 		// No unregister — filter is registered once for the lifetime of the
 		// sidebar plugin, which lives as long as the editor.
 	}, [] );
+
+	// Core's save-failure notice sticks around until the next save replaces
+	// it, so a rejection stays on screen after the user has fixed the problem.
+	// Clear it once validation is clean — but only if we were the ones who
+	// caused it, so a genuine failure (network, REST error) showing under the
+	// same id survives.
+	useEffect( () => {
+		if ( hasErrors || ! rejectedSaveRef.current ) {
+			return;
+		}
+		rejectedSaveRef.current = false;
+		try {
+			removeNotice?.( SAVE_NOTICE_ID );
+		} catch ( err ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				'Accessibility Lab: could not clear save notice',
+				err
+			);
+		}
+	}, [ hasErrors, removeNotice ] );
 }
 
 /**

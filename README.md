@@ -30,11 +30,17 @@ Either bucket can live on either track. Credits are optional metadata any module
 
 Three of the first-party modules compose into a full block-editor validation subsystem:
 
-1. **Block Validation Framework** — a plugin API (`validation_api_register_block_check()`, `validation_api_register_meta_check()`, `validation_api_register_editor_check()`), a `core/validation` data store, real-time debounced validation, publish locking, a Validation sidebar, and REST introspection at `GET /wp-validation/v1/checks`.
+1. **Block Validation Framework** — a plugin API (`validation_api_register_block_check()`, `validation_api_register_meta_check()`, `validation_api_register_editor_check()`), an `accessibility-lab/validation` data store, real-time debounced validation, publish locking, a Validation sidebar, and REST introspection at `GET /wp-validation/v1/checks`.
 2. **Core block accessibility rules** — WCAG-oriented checks for `core/image`, `core/button`, `core/table`, `core/heading`, `core/gallery`, plus a required post/page title editor check.
-3. **Validation settings** — admin UI that auto-generates one settings page per registered check namespace. Third-party plugins that register checks get their own settings page under **A11y Lab: Validation** with zero admin-menu code.
+3. **Validation settings** — a single **Validation** admin page listing every registered check in a DataViews table, with search, sorting, pagination, and filters for check type, registering plugin, and severity. Admins set each check's severity to Error, Warning, or Disabled, and reset overridden checks back to their registered default. Third-party plugins that register checks appear in that table automatically, with zero admin-menu code.
 
-Third parties integrate by calling the same `validation_api_register_*` functions and hooking the `editor.validateBlock` / `editor.validateMeta` / `editor.validateEditor` JS filters.
+Third parties integrate by calling the same `validation_api_register_*` functions and hooking the `editor.validateBlock` / `editor.validateMeta` / `editor.validateEditor` JS filters. **See [docs/features/validation-api.md](docs/features/validation-api.md)** for the full integration guide, including the filter signatures and worked PHP + JS examples for each scope.
+
+Severity overrides are stored in the `validation_api_settings` option, keyed by check id (scope, namespace, target, and check name — so the same check name registered against two block types is configured independently). Checks registered with `'configurable' => false` are omitted from the table and cannot be overridden.
+
+The settings screen is built on `@wordpress/dataviews`. WordPress registers no `wp-dataviews` script or style handle, so the package, its stylesheet, and the `@wordpress/theme` design tokens it depends on all ship inside the plugin bundle — `build/validation-settings.js` is roughly 520 KB, loaded on that one admin screen only.
+
+Import it from the package root, not the `@wordpress/dataviews/wp` subpath. The subpath inlines its own copy of `@wordpress/components`, which alone accounted for two thirds of a 1.9 MB bundle; the root entry lets `wp-components`, `wp-compose` and `wp-private-apis` resolve to the copies WordPress already loads. That does mean the screen depends on core's private-apis allowlist continuing to include `@wordpress/dataviews`, so `src/validation-settings/index.tsx` loads the app inside a try/catch and renders a message instead of a blank page if that ever stops being true.
 
 ## Development
 
@@ -67,14 +73,21 @@ add_action( 'init', function () {
 	if ( ! function_exists( 'validation_api_register_block_check' ) ) {
 		return; // Framework module not active.
 	}
+
+	// Name your plugin once. Every check under this namespace is credited to
+	// it on the settings page.
+	validation_api_register_namespace( 'my-plugin', [
+		'title' => 'My Plugin',
+	] );
+
 	validation_api_register_block_check( 'my-plugin/my-block', [
-		'namespace'    => 'my-plugin',
-		'name'         => 'has_title',
-		'level'        => 'error',
-		'description'  => 'This block must have a title.',
-		'error_msg'    => 'Title is required.',
-		'warning_msg'  => 'Consider adding a title.',
-		'plugin_title' => 'My Plugin',
+		'namespace'   => 'my-plugin',
+		'name'        => 'has_title',
+		'title'       => 'Block title required',
+		'level'       => 'error',
+		'description' => 'This block must have a title.',
+		'error_msg'   => 'Title is required.',
+		'warning_msg' => 'Consider adding a title.',
 	] );
 } );
 ```
@@ -86,13 +99,15 @@ import { addFilter } from '@wordpress/hooks';
 addFilter(
 	'editor.validateBlock',
 	'my-plugin/title-check',
-	( isValid, blockType, attributes, checkName ) => {
-		if ( blockType !== 'my-plugin/my-block' ) return isValid;
+	( isValid, blockName, attributes, checkName ) => {
+		if ( blockName !== 'my-plugin/my-block' ) return isValid;
 		if ( checkName === 'has_title' ) return !! attributes.title?.trim();
 		return isValid;
 	}
 );
 ```
+
+That's the block-attribute case. **[docs/features/validation-api.md](docs/features/validation-api.md)** covers the rest: the full argument reference, the signatures for all three filters, and worked examples for inner block structure, post meta, and editor-scope checks.
 
 ## Structure
 
@@ -116,7 +131,7 @@ includes/
       CoreBlockRules/...         (per-block PHP registration in one file per group)
       Validation_Settings.php
       ValidationSettings/
-        Admin_Pages.php          Auto per-namespace submenu generator
+        Admin_Pages.php          Registers the Validation admin page
         Level_Override.php       Hooks validation_api_check_level
         Rest_Controller.php      /accessibility-lab/v1/validation-settings
     Experiments/
@@ -124,13 +139,14 @@ includes/
       Block_Validation_Framework.php
       BlockValidation/
         Check_Registry.php       In-memory check store
+        Check_Key.php            Stable check id / override key
         Global_Functions.php     validation_api_register_* globals
         Rest_Controller.php      /wp-validation/v1/checks
 src/
   settings/index.tsx             Main lab settings React app
   editor/framework/              Validation runtime (store, sidebar, publish lock)
   editor/core-block-rules/       Per-block JS validators
-  validation-settings/index.tsx  Auto per-namespace admin React app
+  validation-settings/           DataViews admin app for severity overrides
 webpack.config.js                Multi-entry build config
 ```
 

@@ -78,6 +78,7 @@ final class Block_Validation_Framework extends Abstract_Module {
 		foreach ( $scoped as $scope => $checks ) {
 			foreach ( $checks as $i => $check ) {
 				$scoped[ $scope ][ $i ]['resolved_level'] = self::$shared_registry->resolve_level( $check );
+				$scoped[ $scope ][ $i ]['plugin_title']   = self::$shared_registry->resolve_plugin_title( $check );
 			}
 		}
 		$settings['validationApi'] = array(

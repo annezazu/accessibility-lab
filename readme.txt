@@ -25,7 +25,7 @@ Included modules:
 * Media Library: add view options — in-modal popover for infinite scroll, thumbnail density, always-show file names, and items-per-page. Per-user preferences.
 * Block Validation Framework — third-party plugins can register real-time validation checks for blocks, post meta, and editor-level document concerns.
 * Core block accessibility rules — WCAG-oriented validation for the image, button, table, heading, and gallery core blocks, plus required post/page titles.
-* Validation settings — admin UI for overriding the severity of every registered validation check.
+* Validation settings — a Validation admin page listing every registered validation check in a filterable, searchable table, where each check's severity can be set to Error, Warning, or Disabled.
 
 == Installation ==
 
@@ -36,4 +36,4 @@ Included modules:
 == Changelog ==
 
 = 0.1.0 =
-* Initial scaffold: module registry, DataForm settings page, REST endpoint, media-library view-options popover, block validation framework, and core-block WCAG rules.
+* Initial scaffold: module registry, settings page, REST endpoint, media-library view-options popover, block validation framework, core-block WCAG rules, and a DataViews-based validation severity screen.

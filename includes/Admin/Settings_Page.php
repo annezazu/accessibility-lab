@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin settings page (mounts the React DataForm).
+ * Admin settings page (mounts the React module list).
  *
  * @package AccessibilityLab
  */
@@ -59,13 +59,6 @@ final class Settings_Page {
 		);
 
 		wp_set_script_translations( 'accessibility-lab-settings', 'accessibility-lab' );
-
-		// DataForm chrome (cards, field descriptions, etc.) ships with the
-		// @wordpress/dataviews package. WordPress registers it as
-		// `wp-dataviews` but doesn't auto-enqueue it for arbitrary admin
-		// screens — do it here so the DataForm renders with its intended
-		// spacing/typography.
-		wp_enqueue_style( 'wp-dataviews' );
 
 		// wp-scripts emits SCSS chunks as build/style-<entry>.css.
 		$style_file = ACCESSIBILITY_LAB_DIR . '/build/style-settings.css';
