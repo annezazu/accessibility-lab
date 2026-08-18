@@ -46,11 +46,30 @@ Import it from the package root, not the `@wordpress/dataviews/wp` subpath. The 
 
 ```bash
 npm install
-composer install       # future — no PHP deps yet
+composer install
 npm run build          # multi-entry build to build/*.js
 ```
 
 Then symlink the folder into `wp-content/plugins/` (or point wp-env at it) and activate.
+
+### Scripts
+
+| Command | Description |
+|---|---|
+| `npm run start` | Development build in watch mode |
+| `npm run build` | Production build to `build/*.js` |
+| `npm run env:start` | Start the Docker-based `wp-env` WordPress environment |
+| `npm run lint` | Run all linters — JS, CSS, PHPCS, PHPStan |
+| `npm run lint:js` | Lint JS/TS in `src/` |
+| `npm run lint:css` | Lint stylesheets |
+| `npm run lint:php` | Run PHPCS (via Composer) |
+| `npm run lint:phpstan` | Run PHPStan (via Composer) |
+| `npm run format` | Auto-fix JS, CSS, and PHP formatting issues |
+| `composer lint` | Run PHPCS directly |
+| `composer format` | Run PHPCBF (auto-fix) directly |
+| `composer phpstan` | Run PHPStan directly |
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contributor setup and workflow.
 
 ## Registering a module (third-party)
 

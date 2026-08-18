@@ -23,3 +23,12 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Fixed a persistent "Updating failed" notice that remained visible in the editor after the validation error that triggered it was resolved.
 - Autosave and preview saves are now exempted from the validation publish-lock safety net, preventing spurious failure notices during those flows.
 - Reduced the Validation Settings bundle from ~1.9MB to ~520KB by importing `@wordpress/dataviews` from its package root instead of the `/wp` subpath, guarded with a `try`/`catch` and a new `ErrorBoundary` component since this relies on core's private-APIs allowlist.
+
+### Developer
+
+- Added a PHPCS + PHPStan baseline (`composer.json`, `phpcs.xml.dist`, `phpstan.neon.dist`) for PHP linting and static analysis.
+- Added ESLint, Stylelint, and `lint-staged` configuration for JS/CSS linting (`eslint.config.js`, `.stylelintrc.json`).
+- Added `.editorconfig` and `.nvmrc` to pin editor formatting and the Node version across the toolchain.
+- Added a Husky pre-commit hook running lint-staged and PHPStan — currently disabled pending team review, since enabling it now would block commits against the existing codebase's lint state.
+- Added a CI GitHub Actions workflow (`.github/workflows/ci.yml`) running PHPCS/PHPStan across PHP 8.1–8.4 and JS/CSS lint + build — currently manual-trigger only (`workflow_dispatch`), pending review of the intended `push`/`pull_request` triggers.
+- Added GitHub issue templates (bug report, feature request), a pull request template, and a base `CONTRIBUTING.md` guide for contributors.
