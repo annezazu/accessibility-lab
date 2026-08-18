@@ -1,0 +1,27 @@
+{
+  "name": "wordpress/accessibility-lab",
+  "description": "An umbrella of accessibility Features (adopted from the community) and Experiments (Core-track).",
+  "license": "GPL-2.0-or-later",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=8.1"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.2.1",
+    "phpstan/extension-installer": "^1.4.3",
+    "phpstan/phpstan": "^2.2.8",
+    "szepeviktor/phpstan-wordpress": "^2.0.3",
+    "wp-coding-standards/wpcs": "^3.4.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "scripts": {
+    "format": "phpcbf",
+    "lint": "phpcs",
+    "phpstan": "phpstan analyse --memory-limit=2048M"
+  }
+}
