@@ -10,19 +10,19 @@
 import { Page } from '@wordpress/admin-ui';
 import apiFetch from '@wordpress/api-fetch';
 import { Button, SnackbarList } from '@wordpress/components';
-// The `/wp` subpath is the build intended for plugins compiled with
-// @wordpress/scripts: it bundles components and private-apis while leaving
-// the singletons (data, hooks, i18n, date) external, so we neither depend on
-// core's private-apis allowlist nor bind to whatever component version a
-// given WordPress release happens to ship.
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews/wp';
+// The main entry, not the `/wp` subpath. `/wp` inlines its own copy of
+// @wordpress/components, which accounted for two thirds of a 1.9 MB bundle;
+// here components, compose and private-apis resolve to the copies WordPress
+// already loads. Dataviews itself is still bundled — core registers no
+// `wp-dataviews` handle to depend on.
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 
 import { LEVEL_OPTIONS, SeveritySelect } from './components/SeveritySelect';
-import type { Action, Field, View } from '@wordpress/dataviews/wp';
+import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ChecksPayload, Level, OverridesPayload, Row } from './types';
 import { checksToRows, rowsToOverrides } from './utils/transform';
 

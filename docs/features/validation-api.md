@@ -63,6 +63,8 @@ As you edit, failing checks surface in three places:
 - **In the Validation sidebar.** Open it from the editor's options menu. Errors and warnings are listed in separate panels, each naming the problem and linking to the block it came from.
 - **On the publish button.** While any error is unresolved, saving and publishing are blocked. Warnings never block publishing — they're advisory.
 
+**Autosave and Preview are never blocked**, even with errors outstanding. Validation here is an editorial quality gate, not a data-integrity one — the content is well-formed, it just isn't finished. Blocking autosave would risk losing a draft to prevent saving something like a missing alt text, so both paths are deliberately allowed through.
+
 The editor `<body>` also carries `has-validation-errors` or `has-validation-warnings`, which a theme or plugin can hook for its own styling.
 
 ### Adjusting severity
