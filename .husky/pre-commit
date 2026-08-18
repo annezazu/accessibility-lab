@@ -1,0 +1,35 @@
+# #!/usr/bin/env sh
+
+# # `printf` rather than `echo`: POSIX sh (dash, as on Linux/CI) does not
+# # interpret \033 or \n in echo, so escapes would print literally.
+# red() {
+#   printf '\033[0;31m%s\033[0m\n' "$1"
+# }
+
+# rule() {
+#   printf '\033[0;31m%s\033[0m\n' '--------------------------------------------------------------------------------'
+# }
+
+# # 1. Lint only staged files (CSS/JS/PHP) — fast, scoped to what's changing.
+# printf '\n'
+# red 'Linting staged files...'
+# npx lint-staged --no-stash || {
+#   printf '\n'
+#   rule
+#   red 'Linting failed. Commit aborted.'
+#   rule
+#   printf '\n'
+# #   exit 1
+# }
+
+# # 2. PHPStan runs project-wide — it needs whole-codebase context, so it can't
+# #    be scoped to staged files like the linters above.
+# red 'Running PHPStan...'
+# composer phpstan || {
+#   printf '\n'
+#   rule
+#   red 'PHPStan failed. Commit aborted.'
+#   rule
+#   printf '\n'
+#   exit 1
+# }
