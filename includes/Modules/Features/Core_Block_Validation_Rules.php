@@ -71,7 +71,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 	 * Returns the description for the core block accessibility rules module.
 	 */
 	public function description(): string {
-		return __( 'WCAG-oriented validation checks for the image, button, table, heading, and gallery core blocks, plus required post/page titles. Requires the Block Validation Framework module.', 'accessibility-lab' );
+		return __( 'WCAG-oriented validation checks for the image, video, button, table, heading, and gallery core blocks, plus required post/page titles. Requires the Block Validation Framework module.', 'accessibility-lab' );
 	}
 
 	/**
@@ -141,6 +141,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 		);
 
 		$this->register_image_checks();
+		$this->register_video_checks();
 		$this->register_button_checks();
 		$this->register_table_checks();
 		$this->register_heading_checks();
@@ -249,6 +250,24 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'description' => __( 'Buttons with navigation intent must have a valid URL.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This button link is missing or invalid.', 'accessibility-lab' ),
 				'warning_msg' => __( 'This button link may be invalid.', 'accessibility-lab' ),
+			)
+		);
+	}
+
+	/**
+	 * Registers video block accessibility checks.
+	 */
+	private function register_video_checks(): void {
+		validation_api_register_block_check(
+			'core/video',
+			array(
+				'namespace'   => self::NS,
+				'name'        => 'check_video_tracks',
+				'title'       => __( 'Video captions or subtitles recommended', 'accessibility-lab' ),
+				'level'       => 'warning',
+				'description' => __( 'Videos should provide captions or subtitles for deaf or hard-of-hearing users (WCAG 1.2.2).', 'accessibility-lab' ),
+				'error_msg'   => __( 'This video is missing captions or subtitle tracks.', 'accessibility-lab' ),
+				'warning_msg' => __( 'Consider adding captions or subtitles to this video.', 'accessibility-lab' ),
 			)
 		);
 	}

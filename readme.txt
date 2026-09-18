@@ -24,7 +24,7 @@ Included modules:
 
 * Media Library: add view options — in-modal popover for infinite scroll, thumbnail density, always-show file names, and items-per-page. Per-user preferences.
 * Block Validation Framework — third-party plugins can register real-time validation checks for blocks, post meta, and editor-level document concerns.
-* Core block accessibility rules — WCAG-oriented validation for the image, button, table, heading, and gallery core blocks, plus required post/page titles.
+* Core block accessibility rules — WCAG-oriented validation for the image, video, button, table, heading, and gallery core blocks, plus required post/page titles.
 * Validation settings — a Validation admin page listing every registered validation check in a filterable, searchable table, where each check's severity can be set to Error, Warning, or Disabled.
 
 == Installation ==

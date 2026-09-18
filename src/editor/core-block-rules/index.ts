@@ -10,4 +10,5 @@ import './button';
 import './table';
 import './heading';
 import './gallery';
+import './video';
 import './post-title';
