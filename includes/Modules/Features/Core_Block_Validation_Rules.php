@@ -269,6 +269,18 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'warning_msg' => __( 'Consider adding table headers.', 'accessibility-lab' ),
 			)
 		);
+		validation_api_register_block_check(
+			'core/table',
+			array(
+				'namespace'   => self::NS,
+				'name'        => 'check_table_caption',
+				'title'       => __( 'Table caption recommended', 'accessibility-lab' ),
+				'level'       => 'warning',
+				'description' => __( 'Tables should have a caption to describe their purpose or content to screen reader users.', 'accessibility-lab' ),
+				'error_msg'   => __( 'This table is missing a caption.', 'accessibility-lab' ),
+				'warning_msg' => __( 'Consider adding a caption to this table.', 'accessibility-lab' ),
+			)
+		);
 	}
 
 	/**
