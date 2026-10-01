@@ -1,12 +1,9 @@
 name: CI
 
 on:
-  workflow_dispatch:
-
-# on:
-#   push:
-#     branches: [main]
-#   pull_request:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   php:

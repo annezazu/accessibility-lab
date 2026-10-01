@@ -34,7 +34,11 @@ Node version. `npm install` will refuse to run on an unsupported Node or npm
 ```bash
 nvm install && nvm use
 composer install && npm ci && npm run build
+npx husky
 ```
+
+`npx husky` enables the [pre-commit hook](#quality-checks). You only need to
+run it once per clone.
 
 3. **Activate the plugin:**
 
@@ -50,7 +54,9 @@ with the plugin mounted and debugging enabled. See the
 
 ### Quality checks
 
-Before submitting a pull request:
+The codebase is held to ESLint, Stylelint, PHPCS (WordPress Coding Standards)
+and PHPStan (level 8). Before you open a pull request, run the full suite and
+auto-fix what can be fixed:
 
 ```bash
 # Lint everything — JS, CSS, PHPCS, PHPStan
@@ -60,9 +66,23 @@ npm run lint
 npm run format
 ```
 
-The pre-commit hook already runs `lint-staged` plus a project-wide PHPStan, so
-a commit that goes through has passed most of this. CI runs the same checks
-against PHP 8.1–8.4.
+The same checks are enforced automatically:
+
+- **On commit:** the pre-commit hook lints your staged files with ESLint,
+  Stylelint and PHPCS, then runs PHPStan across the whole project, since it
+  needs the full codebase for context. If any check fails, the commit is
+  aborted.
+- **In CI:** every pull request and every push to `main` runs PHPCS and PHPStan
+  against PHP 8.1–8.4, plus ESLint, Stylelint, a `package-lock.json` sync check
+  and the production build on the pinned Node version.
+
+If a rule is genuinely wrong for a specific line, suppress it for that line
+only, name the rule, and give the reason, so reviewers can check it. The same
+pattern works with `eslint-disable-next-line` and `stylelint-disable-next-line`:
+
+```php
+// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- array key in a check definition, not a query arg.
+```
 
 There is no automated test suite yet. Please describe how you verified your
 change in the pull request's testing instructions.
@@ -98,7 +118,8 @@ The following conventions must be followed for consistency and autoloading:
 ### Documentation standards
 
 Every class, method, and property needs a docblock with a summary line — PHPCS
-runs the `WordPress-Docs` ruleset and the codebase currently passes clean. Use
+runs the `WordPress-Docs` ruleset, so a missing one fails the pre-commit hook
+and CI. Use
 explicit type hints on parameters and return values, and document array shapes
 with generics (e.g. `array<string, Abstract_Module>`) so PHPStan can check them
 at level 8.
