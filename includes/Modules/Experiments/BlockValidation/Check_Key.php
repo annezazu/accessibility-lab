@@ -20,6 +20,12 @@ declare( strict_types = 1 );
 
 namespace AccessibilityLab\Modules\Experiments\BlockValidation;
 
+/**
+ * Derives the canonical key for a validation check.
+ *
+ * Stateless; every method is static. The two public entry points exist because
+ * the same key has to be produced from two differently-shaped inputs.
+ */
 final class Check_Key {
 
 	/**
@@ -29,9 +35,10 @@ final class Check_Key {
 	private const SEP = '__';
 
 	/**
-	 * Key for a normalised registry record.
+	 * Key for a normalized registry record.
 	 *
-	 * @param array<string, mixed> $check
+	 * @param array<string, mixed> $check Normalized check record.
+	 * @return string The check's canonical key.
 	 */
 	public static function from_check( array $check ): string {
 		return self::build(
@@ -47,7 +54,8 @@ final class Check_Key {
 	/**
 	 * Key for a `validation_api_check_level` filter context.
 	 *
-	 * @param array<string, mixed> $context
+	 * @param array<string, mixed> $context Filter context passed alongside the level.
+	 * @return string The check's canonical key.
 	 */
 	public static function from_context( array $context ): string {
 		return self::build(
@@ -60,9 +68,24 @@ final class Check_Key {
 		);
 	}
 
+	/**
+	 * Assemble the key from its parts.
+	 *
+	 * Which parts participate depends on the scope: block checks key off the
+	 * block type, meta checks off the post type and meta key, editor checks
+	 * off the post type alone.
+	 *
+	 * @param string $scope           One of the Check_Registry SCOPE_* constants.
+	 * @param string $check_namespace Namespace slug the check was registered under.
+	 * @param string $name            Check slug.
+	 * @param string $block_type      Block type for block-scope checks.
+	 * @param string $post_type       Post type for meta- and editor-scope checks.
+	 * @param string $meta_key        Meta key for meta-scope checks.
+	 * @return string The check's canonical key.
+	 */
 	private static function build(
 		string $scope,
-		string $namespace,
+		string $check_namespace,
 		string $name,
 		string $block_type,
 		string $post_type,
@@ -70,16 +93,16 @@ final class Check_Key {
 	): string {
 		switch ( $scope ) {
 			case Check_Registry::SCOPE_BLOCK:
-				$parts = array( $scope, $namespace, $block_type, $name );
+				$parts = array( $scope, $check_namespace, $block_type, $name );
 				break;
 			case Check_Registry::SCOPE_META:
-				$parts = array( $scope, $namespace, $post_type, $meta_key, $name );
+				$parts = array( $scope, $check_namespace, $post_type, $meta_key, $name );
 				break;
 			case Check_Registry::SCOPE_EDITOR:
-				$parts = array( $scope, $namespace, $post_type, $name );
+				$parts = array( $scope, $check_namespace, $post_type, $name );
 				break;
 			default:
-				$parts = array( $scope, $namespace, $name );
+				$parts = array( $scope, $check_namespace, $name );
 				break;
 		}
 		return implode( self::SEP, $parts );

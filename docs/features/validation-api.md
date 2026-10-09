@@ -59,7 +59,7 @@ Third-party checks need only the framework. If it's disabled, the `validation_ap
 
 As you edit, failing checks surface in three places:
 
-- **On the block.** Blocks with a problem get a coloured border — red for errors, yellow for warnings — via the `validation-api-block-error` and `validation-api-block-warning` classes.
+- **On the block.** Blocks with a problem get a colored border — red for errors, yellow for warnings — via the `validation-api-block-error` and `validation-api-block-warning` classes.
 - **In the Validation sidebar.** Open it from the editor's options menu. Errors and warnings are listed in separate panels, each naming the problem and linking to the block it came from.
 - **On the publish button.** While any error is unresolved, saving and publishing are blocked. Warnings never block publishing — they're advisory.
 

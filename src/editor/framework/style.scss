@@ -25,7 +25,7 @@
 			border-bottom: none;
 		}
 
-		&__button {
+		&-button {
 			width: 100%;
 			text-align: left;
 			padding: 8px !important;
@@ -36,23 +36,23 @@
 			height: auto !important;
 		}
 
-		&__message {
+		&-message {
 			flex: 1 1 auto;
 			font-weight: 500;
 		}
 
-		&__meta {
+		&-meta {
 			flex: 0 0 100%;
 			font-size: 12px;
 			color: #757575;
 			font-family: monospace;
 		}
 
-		&--error .validation-issue__button svg {
+		&-error .validation-issue-button svg {
 			fill: #cc1818;
 		}
 
-		&--warning .validation-issue__button svg {
+		&-warning .validation-issue-button svg {
 			fill: #dba617;
 		}
 	}

@@ -36,7 +36,7 @@ if ( ! function_exists( 'validation_api_register_namespace' ) ) {
 	 * @param string               $namespace Namespace slug used by this plugin's checks.
 	 * @param array<string, mixed> $args      Accepts `title`.
 	 */
-	function validation_api_register_namespace( string $namespace, array $args ): void {
+	function validation_api_register_namespace( string $namespace, array $args ): void { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames -- `namespace` is this API's documented parameter name.
 		$registry = accessibility_lab_validation_check_registry();
 		if ( $registry instanceof Check_Registry ) {
 			$registry->register_namespace( $namespace, $args );
@@ -67,8 +67,8 @@ if ( ! function_exists( 'validation_api_register_meta_check' ) ) {
 	/**
 	 * Register a meta-scope validation check.
 	 *
-	 * @param string               $post_type
-	 * @param array<string, mixed> $args
+	 * @param string               $post_type Post type the meta belongs to, e.g. 'post'.
+	 * @param array<string, mixed> $args      Check definition; must include `meta_key`.
 	 */
 	function validation_api_register_meta_check( string $post_type, array $args ): void {
 		$registry = accessibility_lab_validation_check_registry();
@@ -83,7 +83,7 @@ if ( ! function_exists( 'validation_api_register_editor_check' ) ) {
 	 * Register an editor-scope validation check.
 	 *
 	 * @param string               $post_type Use '*' to apply everywhere.
-	 * @param array<string, mixed> $args
+	 * @param array<string, mixed> $args      Check definition.
 	 */
 	function validation_api_register_editor_check( string $post_type, array $args ): void {
 		$registry = accessibility_lab_validation_check_registry();

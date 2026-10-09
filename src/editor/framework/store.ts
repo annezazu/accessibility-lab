@@ -52,7 +52,9 @@ const reducer = ( state: State = initial, action: Action ): State => {
 			// Replace all issues whose id begins with `${scope}:${key}:`.
 			const prefix = `${ action.scope }:${ action.key }:`;
 			const remaining = Object.fromEntries(
-				Object.entries( state.issues ).filter( ( [ id ] ) => ! id.startsWith( prefix ) )
+				Object.entries( state.issues ).filter(
+					( [ id ] ) => ! id.startsWith( prefix )
+				)
 			);
 			for ( const issue of action.issues ) {
 				remaining[ issue.id ] = issue;
@@ -71,19 +73,29 @@ const selectors = {
 		return Object.values( state.issues );
 	},
 	getIssuesForBlock( state: State, clientId: string ): Issue[] {
-		return Object.values( state.issues ).filter( ( i ) => i.clientId === clientId );
+		return Object.values( state.issues ).filter(
+			( i ) => i.clientId === clientId
+		);
 	},
 	hasErrors( state: State ): boolean {
-		return Object.values( state.issues ).some( ( i ) => i.severity === 'error' );
+		return Object.values( state.issues ).some(
+			( i ) => i.severity === 'error'
+		);
 	},
 	hasWarnings( state: State ): boolean {
-		return Object.values( state.issues ).some( ( i ) => i.severity === 'warning' );
+		return Object.values( state.issues ).some(
+			( i ) => i.severity === 'warning'
+		);
 	},
 	errorCount( state: State ): number {
-		return Object.values( state.issues ).filter( ( i ) => i.severity === 'error' ).length;
+		return Object.values( state.issues ).filter(
+			( i ) => i.severity === 'error'
+		).length;
 	},
 	warningCount( state: State ): number {
-		return Object.values( state.issues ).filter( ( i ) => i.severity === 'warning' ).length;
+		return Object.values( state.issues ).filter(
+			( i ) => i.severity === 'warning'
+		).length;
 	},
 };
 

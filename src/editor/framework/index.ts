@@ -167,7 +167,10 @@ function computeMetaIssues(
 	return issues;
 }
 
-function computeEditorIssues( postType: string, checks: ResolvedCheck[] ): Issue[] {
+function computeEditorIssues(
+	postType: string,
+	checks: ResolvedCheck[]
+): Issue[] {
 	const issues: Issue[] = [];
 	for ( const check of checks ) {
 		if ( check.post_type !== postType && check.post_type !== '*' ) {
@@ -179,7 +182,12 @@ function computeEditorIssues( postType: string, checks: ResolvedCheck[] ): Issue
 		}
 		let isValid = true;
 		try {
-			isValid = applyFilters( 'editor.validateEditor', true, check.name, check ) as boolean;
+			isValid = applyFilters(
+				'editor.validateEditor',
+				true,
+				check.name,
+				check
+			) as boolean;
 		} catch {
 			continue;
 		}
@@ -198,7 +206,10 @@ function computeEditorIssues( postType: string, checks: ResolvedCheck[] ): Issue
 	return issues;
 }
 
-function walkBlocks( blocks: BlockLike[], visit: ( b: BlockLike ) => void ): void {
+function walkBlocks(
+	blocks: BlockLike[],
+	visit: ( b: BlockLike ) => void
+): void {
 	for ( const block of blocks ) {
 		visit( block );
 		if ( block.innerBlocks?.length ) {
@@ -252,7 +263,10 @@ export function useValidationSync(): void {
 				getBlocks?: () => BlockLike[];
 			};
 			const editor = select( editorStore ) as unknown as {
-				getCurrentPost?: () => { type?: string; meta?: Record< string, unknown > };
+				getCurrentPost?: () => {
+					type?: string;
+					meta?: Record< string, unknown >;
+				};
 			};
 			const currentPost = editor?.getCurrentPost?.() ?? {};
 			return {
@@ -271,7 +285,11 @@ export function useValidationSync(): void {
 	const blocksFingerprint = useMemo( () => {
 		const parts: string[] = [];
 		walkBlocks( blocks, ( b ) => {
-			parts.push( `${ b.clientId }:${ b.name }:${ JSON.stringify( b.attributes ?? {} ) }` );
+			parts.push(
+				`${ b.clientId }:${ b.name }:${ JSON.stringify(
+					b.attributes ?? {}
+				) }`
+			);
 		} );
 		return parts.join( '|' );
 	}, [ blocks ] );
@@ -279,7 +297,11 @@ export function useValidationSync(): void {
 	const metaFingerprint = useMemo( () => JSON.stringify( meta ), [ meta ] );
 
 	const { setIssues } = useDispatch( VALIDATION_STORE ) as unknown as {
-		setIssues: ( scope: Issue[ 'scope' ], key: string, issues: Issue[] ) => void;
+		setIssues: (
+			scope: Issue[ 'scope' ],
+			key: string,
+			issues: Issue[]
+		) => void;
 	};
 
 	// Track which per-block/meta keys we've written so we can clear them
@@ -288,6 +310,11 @@ export function useValidationSync(): void {
 	const knownMetaKeys = useRef< Set< string > >( new Set() );
 
 	// Block-scope validation.
+	//
+	// `blocks` is read but deliberately not a dependency: this effect
+	// dispatches into the validation store, and `blocks` gets a fresh array
+	// identity on every dispatch, so depending on it would re-run the effect
+	// forever. `blocksFingerprint` is the stable, value-based equivalent.
 	useEffect( () => {
 		if ( ! setIssues ) {
 			return;
@@ -315,9 +342,13 @@ export function useValidationSync(): void {
 			// eslint-disable-next-line no-console
 			console.warn( 'Accessibility Lab: block validation failed', err );
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- `blocksFingerprint` stands in for `blocks`; see note above.
 	}, [ blocksFingerprint, checks.block, setIssues ] );
 
 	// Meta-scope validation.
+	//
+	// `meta` is read but deliberately not a dependency, for the same reason as
+	// the block effect above; `metaFingerprint` is the stable equivalent.
 	useEffect( () => {
 		if ( ! setIssues ) {
 			return;
@@ -325,7 +356,9 @@ export function useValidationSync(): void {
 		const seen = new Set< string >();
 		try {
 			const perKey = new Map< string, Issue[] >();
-			const relevantChecks = checks.meta.filter( ( c ) => c.post_type === postType );
+			const relevantChecks = checks.meta.filter(
+				( c ) => c.post_type === postType
+			);
 			for ( const check of relevantChecks ) {
 				const key = check.meta_key ?? '';
 				perKey.set( key, [ ...( perKey.get( key ) ?? [] ) ] );
@@ -349,6 +382,7 @@ export function useValidationSync(): void {
 			// eslint-disable-next-line no-console
 			console.warn( 'Accessibility Lab: meta validation failed', err );
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- `metaFingerprint` stands in for `meta`; see note above.
 	}, [ metaFingerprint, postType, checks.meta, setIssues ] );
 
 	// Editor-scope validation.
@@ -363,7 +397,13 @@ export function useValidationSync(): void {
 			// eslint-disable-next-line no-console
 			console.warn( 'Accessibility Lab: editor validation failed', err );
 		}
-	}, [ postType, checks.editor, blocksFingerprint, metaFingerprint, setIssues ] );
+	}, [
+		postType,
+		checks.editor,
+		blocksFingerprint,
+		metaFingerprint,
+		setIssues,
+	] );
 }
 
 /**
@@ -400,7 +440,9 @@ export function useValidationConsequences(): void {
 		}
 	}, [] );
 
-	const { lockPostSaving, unlockPostSaving } = useDispatch( editorStore ) as unknown as {
+	const { lockPostSaving, unlockPostSaving } = useDispatch(
+		editorStore
+	) as unknown as {
 		lockPostSaving?: ( key: string ) => void;
 		unlockPostSaving?: ( key: string ) => void;
 	};
@@ -425,7 +467,10 @@ export function useValidationConsequences(): void {
 			}
 		} catch ( err ) {
 			// eslint-disable-next-line no-console
-			console.warn( 'Accessibility Lab: publish lock update failed', err );
+			console.warn(
+				'Accessibility Lab: publish lock update failed',
+				err
+			);
 		}
 	}, [ hasErrors, lockPostSaving, unlockPostSaving ] );
 
@@ -434,7 +479,10 @@ export function useValidationConsequences(): void {
 			return;
 		}
 		document.body.classList.toggle( 'has-validation-errors', hasErrors );
-		document.body.classList.toggle( 'has-validation-warnings', hasWarnings && ! hasErrors );
+		document.body.classList.toggle(
+			'has-validation-warnings',
+			hasWarnings && ! hasErrors
+		);
 		return () => {
 			document.body?.classList.remove(
 				'has-validation-errors',
@@ -511,12 +559,18 @@ addFilter(
 	'editor.BlockListBlock',
 	'accessibility-lab/validation-block-className',
 	( BlockListBlock: unknown ) => {
-		const wp = ( window as unknown as {
-			wp?: {
-				element?: { createElement?: ( t: unknown, p: unknown ) => unknown };
-				data?: { useSelect?: ( fn: unknown, deps: unknown[] ) => unknown };
-			};
-		} ).wp;
+		const wp = (
+			window as unknown as {
+				wp?: {
+					element?: {
+						createElement?: ( t: unknown, p: unknown ) => unknown;
+					};
+					data?: {
+						useSelect?: ( fn: unknown, deps: unknown[] ) => unknown;
+					};
+				};
+			}
+		 ).wp;
 		const createElement = wp?.element?.createElement;
 		const useSelectRuntime = wp?.data?.useSelect;
 		if ( ! createElement || ! useSelectRuntime ) {
@@ -528,12 +582,17 @@ addFilter(
 					try {
 						const store = ( selectFn as ( n: string ) => unknown )(
 							VALIDATION_STORE
-						) as { getIssuesForBlock?: ( id: string ) => Issue[] } | null;
-						const issues = store?.getIssuesForBlock?.( props.clientId ) ?? [];
+						) as {
+							getIssuesForBlock?: ( id: string ) => Issue[];
+						} | null;
+						const issues =
+							store?.getIssuesForBlock?.( props.clientId ) ?? [];
 						if ( issues.some( ( i ) => i.severity === 'error' ) ) {
 							return 'error';
 						}
-						if ( issues.some( ( i ) => i.severity === 'warning' ) ) {
+						if (
+							issues.some( ( i ) => i.severity === 'warning' )
+						) {
 							return 'warning';
 						}
 						return '';
