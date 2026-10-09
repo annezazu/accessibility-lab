@@ -14,6 +14,10 @@ type Track = {
 type VideoAttributes = {
 	id?: number;
 	src?: string;
+	autoplay?: boolean;
+	controls?: boolean;
+	loop?: boolean;
+	muted?: boolean;
 	tracks?: Track[];
 };
 
@@ -38,14 +42,26 @@ addFilter(
 				if ( ! hasVideo ) {
 					return true;
 				}
+				// Muted, looping, autoplaying video without controls is a
+				// background/decorative clip with no audio to caption.
+				const isBackground =
+					attributes.autoplay &&
+					attributes.muted &&
+					attributes.loop &&
+					attributes.controls === false;
+				if ( isBackground ) {
+					return true;
+				}
 				const tracks = Array.isArray( attributes.tracks )
 					? attributes.tracks
 					: [];
 				return tracks.some(
 					( track ) =>
 						Boolean( track?.src ) &&
-						( track?.kind === 'captions' ||
-							track?.kind === 'subtitles' )
+						// A <track> without `kind` defaults to subtitles.
+						[ 'captions', 'subtitles', undefined ].includes(
+							track?.kind
+						)
 				);
 			}
 
