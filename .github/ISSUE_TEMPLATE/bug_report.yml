@@ -50,11 +50,11 @@ body:
       label: Which module(s) are affected?
       multiple: true
       options:
-        - Media Library View Config
+        - Media Library: add view options
         - Block Validation Framework
         - Core block accessibility rules
         - Validation settings
-        - Lab settings dashboard
+        - Accessibility Lab settings page
         - Build tools / CI
         - Not sure / other
     validations:

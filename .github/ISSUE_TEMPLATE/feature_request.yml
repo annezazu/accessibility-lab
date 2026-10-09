@@ -12,12 +12,12 @@ body:
     id: area
     attributes:
       label: Which area does this relate to?
-      description: See the [README](https://github.com/WordPress/accessibility-lab/blob/main/README.md) for how the plugin organizes Features, Experiments, and Tracks.
+      description: See the [README](https://github.com/WordPress/accessibility-lab/blob/main/README.md) for how the plugin organizes modules into Features and Experiments, each on a Core or Practical track.
       options:
-        - Feature (Practical track)
-        - Experiment (Core track)
+        - New feature
+        - New experiment
         - Block validation rule
-        - Enhancement to existing feature
+        - Enhancement to an existing module
         - Other / not sure
     validations:
       required: true

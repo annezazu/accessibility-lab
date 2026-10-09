@@ -28,6 +28,12 @@ Closes <!-- #ISSUE-NUMBER or URL -->
 | ------ | ----- |
 |        |       |
 
+## Checklist
+- [ ] I have read the [Contributing Guidelines](https://github.com/WordPress/accessibility-lab/blob/main/CONTRIBUTING.md)
+- [ ] `npm run lint` passes locally (JS, CSS, PHPCS, PHPStan)
+- [ ] I have tested this change using the steps in Testing Instructions
+- [ ] I have updated relevant documentation (README, CONTRIBUTING, docblocks) if needed
+
 ## Use of AI Tools
 <!--
 You are free to use artificial intelligence (AI) tooling to contribute, but you must disclose what tooling you are using and to what extent a pull request has been authored by AI. It is your responsibility to review and take responsibility for what AI generates. See the WordPress AI Guidelines: <https://make.wordpress.org/ai/handbook/ai-guidelines/>.
