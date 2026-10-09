@@ -12,12 +12,12 @@ body:
     id: area
     attributes:
       label: Which area does this relate to?
-      description: See the [readme](https://github.com/WordPress/accessibility-lab/blob/main/readme.txt) for what these categories mean.
+      description: See the [README](https://github.com/WordPress/accessibility-lab/blob/main/README.md) for how the plugin organizes modules into Features and Experiments, each on a Core or Practical track.
       options:
-        - Stable feature
-        - Experiment
-        - Core Track
-        - New module
+        - New feature
+        - New experiment
+        - Block validation rule
+        - Enhancement to an existing module
         - Other / not sure
     validations:
       required: true
@@ -26,8 +26,7 @@ body:
     id: problem
     attributes:
       label: Is your feature request related to a problem?
-      description: A clear and concise description of what the problem is, if any.
-      placeholder: I'm always frustrated when...
+      description: A clear and concise description of the accessibility barrier or problem you are trying to solve.
     validations:
       required: false
 
@@ -35,7 +34,7 @@ body:
     id: solution
     attributes:
       label: Describe the solution you'd like
-      description: A clear and concise description of what you want to happen.
+      description: A clear and concise description of what you want to happen and how it improves accessibility.
     validations:
       required: true
 
@@ -43,7 +42,7 @@ body:
     id: alternatives
     attributes:
       label: Describe alternatives you've considered
-      description: Any alternative solutions or features you've considered.
+      description: Any alternative solutions, features, or workarounds you've considered.
     validations:
       required: false
 

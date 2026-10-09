@@ -50,10 +50,12 @@ body:
       label: Which module(s) are affected?
       multiple: true
       options:
-        - Media Library view options
+        - Media Library: add view options
         - Block Validation Framework
         - Core block accessibility rules
         - Validation settings
+        - Accessibility Lab settings page
+        - Build tools / CI
         - Not sure / other
     validations:
       required: true
@@ -62,15 +64,7 @@ body:
     id: wp-version
     attributes:
       label: WordPress version
-      placeholder: e.g. 6.7
-    validations:
-      required: true
-
-  - type: input
-    id: php-version
-    attributes:
-      label: PHP version
-      placeholder: e.g. 8.2
+      placeholder: e.g. 6.7 or trunk
     validations:
       required: true
 
@@ -78,15 +72,32 @@ body:
     id: plugin-version
     attributes:
       label: Accessibility Lab version
-      placeholder: e.g. 0.1.0
+      placeholder: e.g. 0.1.0 or main
     validations:
       required: true
+
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: e.g. 8.2 (if applicable)
+    validations:
+      required: false
+
+  - type: input
+    id: assistive-tech
+    attributes:
+      label: Browser / Assistive technology
+      placeholder: e.g. Chrome 128 with NVDA / VoiceOver / Safari / Keyboard only
+      description: If this issue involves keyboard navigation, screen readers, or specific browsers, please note them here.
+    validations:
+      required: false
 
   - type: textarea
     id: context
     attributes:
       label: Additional context
-      description: Anything else that might help us track this down (browser, theme, other active plugins, console errors, etc).
+      description: Any other information that might help diagnose the issue (theme, other active plugins, browser console errors, etc).
     validations:
       required: false
 

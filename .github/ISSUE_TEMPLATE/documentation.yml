@@ -1,0 +1,49 @@
+name: Documentation
+description: Suggest improvements or report issues in documentation, guides, or docblocks.
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the documentation for the Accessibility Lab plugin! Please check existing issues before filing a new one.
+
+  - type: dropdown
+    id: doc-area
+    attributes:
+      label: Which documentation area needs improvement?
+      options:
+        - README.md / User guides
+        - CONTRIBUTING.md / Development setup
+        - Feature guides (docs/features/)
+        - Code docblocks / PHPStan annotations
+        - Inline code comments
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What needs to be documented or corrected?
+      description: Provide a clear explanation of what is missing, outdated, or confusing. Include links to relevant files or sections if applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-fix
+    attributes:
+      label: Suggested change or content
+      description: If you have a specific suggestion, corrected wording, or draft content, please include it here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to make sure this isn't a duplicate.
+          required: true
+        - label: I am willing to submit a pull request to update this documentation.
+          required: false
