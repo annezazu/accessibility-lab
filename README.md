@@ -39,7 +39,7 @@ Two words do a lot of work in this subsystem, so to be precise: **validation** n
 Three of the first-party modules compose into a full block-editor validation subsystem:
 
 1. **Block Validation Framework** — a plugin API (`validation_api_register_block_check()`, `validation_api_register_meta_check()`, `validation_api_register_editor_check()`), an `accessibility-lab/validation` data store, real-time debounced validation, publish locking, a Validation sidebar, and REST introspection at `GET /wp-validation/v1/checks`.
-2. **Core block accessibility rules** — WCAG-oriented checks for `core/image`, `core/button`, `core/table`, `core/heading`, `core/gallery`, plus a required post/page title editor check.
+2. **Core block accessibility rules** — WCAG-oriented checks for `core/image`, `core/video`, `core/button`, `core/table`, `core/heading`, `core/gallery`, plus a required post/page title editor check.
 3. **Validation settings** — a single **Validation** admin page listing every registered check in a DataViews table, with search, sorting, pagination, and filters for check type, registering plugin, and severity. Admins set each check's severity to Error, Warning, or Disabled, and reset overridden checks back to their registered default. Third-party plugins that register checks appear in that table automatically, with zero admin-menu code.
 
 Third parties integrate by calling the same `validation_api_register_*` functions and hooking the `editor.validateBlock` / `editor.validateMeta` / `editor.validateEditor` JS filters. **See [docs/features/validation-api.md](docs/features/validation-api.md)** for the full integration guide, including the filter signatures and worked PHP + JS examples for each scope.

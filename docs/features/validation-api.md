@@ -46,7 +46,7 @@ The plugin declares a starting severity; a site administrator can override it pe
 The subsystem is three separately toggleable modules under **Settings → Accessibility Lab**:
 
 1. **Block Validation Framework** — the registration API, the `accessibility-lab/validation` data store, the editor runtime, the Validation sidebar, publish locking, and REST introspection. Everything else depends on it.
-2. **Core block accessibility rules** — WCAG checks for `core/image`, `core/button`, `core/table`, `core/heading` and `core/gallery`, plus required post and page titles. An optional consumer of the framework, and a working reference.
+2. **Core block accessibility rules** — WCAG checks for `core/image`, `core/video`, `core/button`, `core/table`, `core/heading` and `core/gallery`, plus required post and page titles. An optional consumer of the framework, and a working reference.
 3. **Validation settings** — the admin screen for adjusting severities.
 
 Third-party checks need only the framework. If it's disabled, the `validation_api_register_*` functions don't exist, which is why every example below guards with `function_exists()`.
