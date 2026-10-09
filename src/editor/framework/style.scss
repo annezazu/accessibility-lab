@@ -34,18 +34,41 @@
 			gap: 8px;
 			flex-wrap: wrap;
 			height: auto !important;
+			white-space: normal;
+			border-radius: 2px;
+			color: #1e1e1e;
+
+			svg {
+				flex-shrink: 0;
+				margin-top: 1px;
+			}
+
+			&:focus-visible,
+			&:hover:not(:disabled) {
+				color: var(--wp-admin-theme-color, #3858e9);
+			}
 		}
 
 		&__message {
-			flex: 1 1 auto;
+			flex: 1 1 calc(100% - 32px);
+			min-width: 0;
 			font-weight: 500;
+			line-height: 1.4;
+			white-space: normal;
+			overflow-wrap: break-word;
 		}
 
 		&__meta {
-			flex: 0 0 100%;
+			flex: 0 0 auto;
+			margin-left: 32px;
 			font-size: 12px;
-			color: #757575;
+			color: #646970;
+			background: #f0f0f1;
+			padding: 1px 6px;
+			border-radius: 2px;
 			font-family: monospace;
+			line-height: 1.4;
+			overflow-wrap: break-word;
 		}
 
 		&--error .validation-issue__button svg {
