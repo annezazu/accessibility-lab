@@ -275,7 +275,7 @@ final class Core_Block_Validation_Rules extends Abstract_Module {
 				'namespace'   => self::NS,
 				'name'        => 'check_table_caption',
 				'title'       => __( 'Table caption recommended', 'accessibility-lab' ),
-				'level'       => 'warning',
+				'level'       => 'none',
 				'description' => __( 'Tables should have a caption to describe their purpose or content to screen reader users.', 'accessibility-lab' ),
 				'error_msg'   => __( 'This table is missing a caption.', 'accessibility-lab' ),
 				'warning_msg' => __( 'Consider adding a caption to this table.', 'accessibility-lab' ),

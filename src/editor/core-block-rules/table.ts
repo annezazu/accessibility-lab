@@ -13,7 +13,10 @@ type TableAttributes = {
 };
 
 function stripHtml( html: string ): string {
-	return html.replace( /<[^>]*>/g, '' ).trim();
+	return html
+		.replace( /<[^>]*>/g, '' )
+		.replace( /&nbsp;|\u00a0/g, ' ' )
+		.trim();
 }
 
 addFilter(
